@@ -1,0 +1,57 @@
+{
+  "Harshith": {
+    "name": "Harshith",
+    "rating": 1000,
+    "wins": 1,
+    "losses": 0,
+    "draws": 0,
+    "gamesPlayed": 1,
+    "bestScore": 9,
+    "totalScore": 9,
+    "createdAt": 1771264727913
+  },
+  "Player_2739": {
+    "name": "Player_2739",
+    "rating": 1000,
+    "wins": 0,
+    "losses": 0,
+    "draws": 0,
+    "gamesPlayed": 0,
+    "bestScore": 0,
+    "totalScore": 0,
+    "createdAt": 1771264783824
+  },
+  "P1": {
+    "name": "P1",
+    "rating": 1000,
+    "wins": 0,
+    "losses": 0,
+    "draws": 0,
+    "gamesPlayed": 0,
+    "bestScore": 0,
+    "totalScore": 0,
+    "createdAt": 1771264920055
+  },
+  "P2": {
+    "name": "P2",
+    "rating": 1000,
+    "wins": 0,
+    "losses": 1,
+    "draws": 0,
+    "gamesPlayed": 1,
+    "bestScore": 183,
+    "totalScore": 183,
+    "createdAt": 1771264922917
+  },
+  "P3": {
+    "name": "P3",
+    "rating": 1000,
+    "wins": 1,
+    "losses": 0,
+    "draws": 0,
+    "gamesPlayed": 1,
+    "bestScore": 141,
+    "totalScore": 141,
+    "createdAt": 1771264980448
+  }
+}

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang='en'>
+	<head>
+		<title>Hextris</title>
+		<meta name="description" content="An addictive puzzle game inspired by Tetris.">
+		<link rel="manifest" href="manifest.webmanifest">
+		<meta name="apple-itunes-app" content="app-id=903769553"/>
+		<meta name="apple-mobile-web-app-title" content="Hextris">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<link rel="apple-touch-icon" sizes="120x120" href="images/icons/apple-touch-120.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="images/icons/apple-touch-152.png">
+		<link rel="apple-touch-icon" sizes="167x167" href="images/icons/apple-touch-167.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="images/icons/apple-touch-180.png">
+		<link rel="apple-touch-icon" sizes="512x512" href="images/icons/apple-touch-512.png">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, minimal-ui"/>
+		<meta property="og:url" content="http://hextris.github.io/hextris/"/>
+		<meta property="og:site_name" content="Hextris"/>
+		<meta property="og:title" content="Hextris"/>
+		<meta property="og:description" content="An addictive puzzle game inspired by Tetris."/>
+		<meta property="og:type" content="website"/>
+		<meta property="og:author" content="https://www.facebook.com/hextris"/>
+		<meta property="og:image" content="http://hextris.github.io/hextris/images/facebook-opengraph.png"/>
+		<meta property="og:image:width" content="1200"/>
+		<meta property="og:image:height" content="630"/>
+		<meta property="twitter:card" content="summary"/>
+		<meta property="twitter:site" content="@hextris"/>
+		<meta property="twitter:site:id" content="2742209678"/>
+		<meta property="twitter:creator" content="@hextris"/>
+		<meta property="twitter:creator:id" content="2742209678"/>
+		<meta property="twitter:domain" content="http://hextris.github.io"/>
+		<meta property="twitter:title" content="Hextris"/>
+		<meta property="twitter:description" content="An addictive puzzle game inspired by Tetris."/>
+		<meta property="twitter:image:src" content="http://hextris.github.io/hextris/images/twitter-opengraph.png"/>
+		<meta property="twitter:image:width" content="512"/>
+		<meta property="twitter:image:height" content="512"/>
+		<meta property="twitter:app:id:iphone" content="id903769553">
+		<meta property="twitter:app:id:ipad" content="id903769553">
+		<meta property="twitter:app:id:googleplay" content="com.hextris.hextris">
+		<meta property="twitter:app:country" content="us">
+		<meta property="twitter:app:url:iphone" content="itunes.apple.com/us/app/id903769553?mt=8">
+		<meta property="twitter:app:url:ipad" content="itunes.apple.com/us/app/id903769553?mt=8">
+		<meta property="twitter:app:url:googleplay" content="https://play.google.com/store/apps/details?id=com.hextris.hextris">
+		<link rel="icon" type="image/png" href="favicon.ico">
+		<link href='https://fonts.googleapis.com/css?family=Exo+2:200,400,600' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="style/fa/css/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="style/style.css">
+		<script type='text/javascript' src="vendor/hammer.min.js"></script>
+		<script type='text/javascript' src="vendor/js.cookie.js"></script>
+		<script type='text/javascript' src="vendor/jsonfn.min.js"></script>
+		<script type='text/javascript' src="vendor/keypress.min.js"></script>
+		<script type='text/javascript' src="vendor/jquery.js"></script>
+		<script type='text/javascript' src="js/save-state.js"></script>
+		<script type='text/javascript' src="js/view.js"></script>
+		<script type='text/javascript' src="js/wavegen.js"></script>
+		<script type='text/javascript' src="js/math.js"></script>
+		<script type='text/javascript' src="js/Block.js"></script>
+		<script type='text/javascript' src="js/Hex.js"></script>
+		<script type='text/javascript' src="js/Text.js"></script>
+		<script type='text/javascript' src="js/comboTimer.js"></script>
+		<script type='text/javascript' src="js/checking.js"></script>
+		<script type='text/javascript' src='js/update.js'></script>
+		<script type='text/javascript' src='js/render.js'></script>
+		<script type='text/javascript' src="js/input.js"></script>
+		<script type='text/javascript' src="js/main.js"></script>
+		<script type='text/javascript' src="js/initialization.js"></script>
+		<script src="vendor/sweet-alert.min.js"></script>
+		<link rel="stylesheet" href="style/rrssb.css"/>
+		<!-- Socket.io client -->
+		<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+		<!-- Multiplayer modules -->
+		<script type='text/javascript' src='js/multiplayer.js'></script>
+		<script type='text/javascript' src='js/battle-render.js'></script>
+		<script type='text/javascript' src='js/ai-opponent.js'></script>
+		<script type='text/javascript' src='js/levels.js'></script>
+		<script type='text/javascript' src='js/powerups.js'></script>
+		<script type='text/javascript' src='js/game-config.js'></script>
+		<script type='text/javascript' src='js/leaderboard.js'></script>
+		<script type='text/javascript' src='js/lobby-ui.js'></script>
+		<!-- New features -->
+		<script type='text/javascript' src='js/particles.js'></script>
+		<script type='text/javascript' src='js/achievements.js'></script>
+		<script type='text/javascript' src='js/daily-challenge.js'></script>
+		<!-- Background Music -->
+		<script type='text/javascript' src='js/music.js'></script>
+	</head>
+	<body>
+		<canvas id="canvas"></canvas>
+
+		<!-- ═══ Music Toggle Button ═══ -->
+		<button id="musicToggleBtn" title="Mute Music" onclick="GameMusic.toggleMute()">
+			<i class="fa fa-volume-up"></i>
+		</button>
+
+		<!-- ═══ Opponent Side Panel (Battle Mode) ═══ -->
+		<div id="opponentPanel" style="display:none;">
+			<div class="opp-header">
+				<span id="opponentName">Opponent</span>
+				<span id="opponentLives">
+					<span class="opp-heart">❤️</span>
+					<span class="opp-heart">❤️</span>
+					<span class="opp-heart">❤️</span>
+				</span>
+			</div>
+			<canvas id="opponentCanvas" width="240" height="240"></canvas>
+			<div class="opp-score-row">
+				<span class="opp-score-label">SCORE</span>
+				<span id="opponentScore">0</span>
+			</div>
+		</div>
+
+		<!-- ═══ Multiplayer Countdown Overlay ═══ -->
+		<div id="mpCountdown" style="display:none;">3</div>
+
+		<!-- ═══ Multiplayer Main Menu ═══ -->
+		<div id="mpMainMenu" class="mp-screen" style="display:none;">
+			<div class="mp-menu-container">
+				<!-- Animated floating hex shapes background -->
+				<div class="menu-bg-shapes">
+					<div class="float-hex hex1">⬡</div>
+					<div class="float-hex hex2">⬡</div>
+					<div class="float-hex hex3">⬡</div>
+					<div class="float-hex hex4">⬡</div>
+					<div class="float-hex hex5">⬡</div>
+					<div class="float-hex hex6">⬡</div>
+				</div>
+
+				<!-- Logo with glow -->
+				<div class="menu-logo">
+					<div class="mp-title">HEXTRIS</div>
+					<div class="mp-tagline">Match • Rotate • Conquer</div>
+				</div>
+
+				<div class="mp-name-row">
+					<label for="mpPlayerNameInput">YOUR NAME</label>
+					<input type="text" id="mpPlayerNameInput" placeholder="Enter name..." maxlength="16" autocomplete="off"/>
+				</div>
+
+				<div class="mp-profile-stats">
+					<div class="mp-stat"><span class="mp-stat-label">Rating</span><span id="mpProfileRating" class="mp-stat-value">1000</span></div>
+					<div class="mp-stat"><span class="mp-stat-label">Wins</span><span id="mpProfileWins" class="mp-stat-value">0</span></div>
+					<div class="mp-stat"><span class="mp-stat-label">Losses</span><span id="mpProfileLosses" class="mp-stat-value">0</span></div>
+					<div class="mp-stat"><span class="mp-stat-label">Best</span><span id="mpProfileBest" class="mp-stat-value">0</span></div>
+				</div>
+
+				<!-- Main Action Buttons -->
+				<div class="menu-hero-row">
+					<button id="mpBtnSinglePlayer" class="menu-hero-btn hero-play">
+						<span class="hero-icon">▶</span>
+						<span class="hero-label">PLAY</span>
+					</button>
+					<button id="mpBtnLevels" class="menu-hero-btn hero-campaign">
+						<span class="hero-icon">🏰</span>
+						<span class="hero-label">CAMPAIGN</span>
+					</button>
+					<button id="mpBtnDailyChallenge" class="menu-hero-btn hero-daily">
+						<span class="hero-icon">📅</span>
+						<span class="hero-label">DAILY</span>
+					</button>
+				</div>
+
+				<!-- Secondary buttons in grid -->
+				<div class="menu-grid">
+					<button id="mpBtnCreateRoom" class="menu-tile"><span class="tile-icon">🏠</span><span class="tile-label">Create Room</span></button>
+					<button id="mpBtnJoinRoom" class="menu-tile"><span class="tile-icon">🚪</span><span class="tile-label">Join Room</span></button>
+					<button id="mpBtnLeaderboard" class="menu-tile"><span class="tile-icon">🏆</span><span class="tile-label">Leaderboard</span></button>
+					<button id="mpBtnStats" class="menu-tile"><span class="tile-icon">📊</span><span class="tile-label">Stats</span></button>
+					<button id="mpBtnSettings" class="menu-tile"><span class="tile-icon">⚙️</span><span class="tile-label">Settings</span></button>
+				</div>
+
+				<div id="mpConnectionStatus" class="disconnected">Connecting...</div>
+			</div>
+		</div>
+
+		<!-- ═══ Create Room Screen ═══ -->
+		<div id="mpCreateRoomScreen" class="mp-screen" style="display:none;">
+			<div class="mp-panel">
+				<div class="mp-panel-title">CREATE ROOM</div>
+
+				<div class="mp-form-group">
+					<label>Game Mode</label>
+					<div class="mp-radio-group">
+						<label class="mp-radio"><input type="radio" name="mpGameMode" value="battle" checked/> ⚔️ Battle (1v1)</label>
+						<label class="mp-radio"><input type="radio" name="mpGameMode" value="survival"/> 🏆 Survival (2-4)</label>
+					</div>
+				</div>
+
+				<div class="mp-form-group">
+					<label>Lives</label>
+					<select id="mpLivesSelect" class="mp-select">
+						<option value="1">1 Life</option>
+						<option value="2">2 Lives</option>
+						<option value="3" selected>3 Lives</option>
+						<option value="5">5 Lives</option>
+					</select>
+				</div>
+
+				<div class="mp-form-group">
+					<label class="mp-checkbox">
+						<input type="checkbox" id="mpPenaltyToggle" checked/>
+						Enable Penalty Attacks
+					</label>
+				</div>
+
+				<div class="mp-btn-row">
+					<button class="mp-btn mp-btn-back">← Back</button>
+					<button id="mpBtnCreateConfirm" class="mp-btn primary">Create Room</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- ═══ Join Room Screen ═══ -->
+		<div id="mpJoinRoomScreen" class="mp-screen" style="display:none;">
+			<div class="mp-panel">
+				<div class="mp-panel-title">JOIN ROOM</div>
+
+				<div class="mp-form-group">
+					<label>Room Code</label>
+					<input type="text" id="mpRoomCodeInput" placeholder="ENTER CODE" maxlength="5" class="mp-code-input" autocomplete="off"/>
+				</div>
+
+				<div class="mp-btn-row">
+					<button class="mp-btn mp-btn-back">← Back</button>
+					<button id="mpBtnJoinConfirm" class="mp-btn primary">Join</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- ═══ Lobby Screen ═══ -->
+		<div id="mpLobbyScreen" class="mp-screen" style="display:none;">
+			<div class="mp-panel lobby-panel">
+				<div class="mp-panel-title">GAME LOBBY</div>
+
+				<div class="mp-room-info">
+					<span class="room-code-label">ROOM CODE:</span>
+					<span id="mpRoomCode" class="room-code">-----</span>
+					<span id="mpRoomMode" class="room-mode">Battle Mode</span>
+					<span id="mpRoomPlayerCount" class="room-players">0/2</span>
+				</div>
+
+				<div id="mpPlayerList" class="mp-player-list">
+					<!-- Filled dynamically -->
+				</div>
+
+				<div class="mp-chat-box">
+					<div id="mpChatMessages" class="mp-chat-messages"></div>
+					<div class="mp-chat-input-row">
+						<input type="text" id="mpChatInput" placeholder="Type a message..." maxlength="200" autocomplete="off"/>
+						<button id="mpBtnSendChat" class="mp-btn-sm">Send</button>
+					</div>
+				</div>
+
+				<div class="mp-btn-row">
+					<button id="mpBtnLeaveRoom" class="mp-btn danger">Leave</button>
+					<button id="mpBtnReady" class="mp-btn primary">READY UP</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- ═══ Leaderboard Screen ═══ -->
+		<div id="mpLeaderboardScreen" class="mp-screen" style="display:none;">
+			<div class="mp-panel">
+				<div class="mp-panel-title">🏆 LEADERBOARD</div>
+				<div class="lb-tabs">
+					<button class="lb-tab active" data-mode="">All</button>
+					<button class="lb-tab" data-mode="battle">Battle</button>
+					<button class="lb-tab" data-mode="survival">Survival</button>
+				</div>
+				<div id="mpLeaderboardList" class="lb-list">
+					<div class="lb-empty">Loading...</div>
+				</div>
+				<button class="mp-btn mp-btn-back" style="margin-top:16px;">← Back</button>
+			</div>
+		</div>
+
+		<!-- ═══ Match Results Screen ═══ -->
+		<div id="mpResultsScreen" class="mp-screen" style="display:none;">
+			<div class="mp-panel">
+				<div id="mpResultTitle" class="mp-panel-title result-title">RESULTS</div>
+				<div id="mpResultsList" class="results-list"></div>
+				<div class="mp-btn-row">
+					<button id="mpBtnBackToMenu" class="mp-btn">Menu</button>
+					<button id="mpBtnPlayAgain" class="mp-btn primary">Play Again</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- ═══ Settings / Configuration Screen ═══ -->
+		<div id="mpSettingsScreen" class="mp-screen" style="display:none;">
+			<div class="mp-panel settings-panel">
+				<div class="mp-panel-title">⚙️ GAME SETTINGS</div>
+
+				<div class="cfg-section">
+					<div class="cfg-section-title">🎨 Block Colors</div>
+					<div id="cfgColorGrid" class="cfg-color-grid">
+						<!-- Populated by game-config.js -->
+					</div>
+				</div>
+
+				<div class="cfg-section">
+					<div class="cfg-section-title">⚡ Game Speed</div>
+					<select id="cfgSpeed" class="mp-select cfg-select">
+						<option value="slow">🐢 Slow</option>
+						<option value="normal" selected>🏃 Normal</option>
+						<option value="fast">🚀 Fast</option>
+						<option value="insane">💀 Insane</option>
+					</select>
+				</div>
+
+				<div class="cfg-section">
+					<div class="cfg-section-title">🔷 Shape</div>
+					<select id="cfgShape" class="mp-select cfg-select">
+						<option value="pentagon">⬠ Pentagon (5 sides)</option>
+						<option value="hexagon" selected>⬡ Hexagon (6 sides)</option>
+						<option value="octagon">⯃ Octagon (8 sides)</option>
+					</select>
+				</div>
+
+				<div class="cfg-section">
+					<div class="cfg-section-title">📦 Block Size</div>
+					<select id="cfgBlockSize" class="mp-select cfg-select">
+						<option value="small">Small</option>
+						<option value="normal" selected>Normal</option>
+						<option value="large">Large</option>
+					</select>
+				</div>
+
+				<div class="cfg-section">
+					<div class="cfg-section-title">❤️ Lives</div>
+					<select id="cfgLives" class="mp-select cfg-select">
+						<option value="1">1 Life (Hardcore)</option>
+						<option value="2">2 Lives</option>
+						<option value="3" selected>3 Lives</option>
+						<option value="5">5 Lives</option>
+						<option value="10">10 Lives (Easy)</option>
+					</select>
+				</div>
+
+				<div class="cfg-section cfg-toggles">
+					<label class="mp-checkbox"><input type="checkbox" id="cfgPowerUps" checked/> Enable Power-Ups</label>
+					<label class="mp-checkbox"><input type="checkbox" id="cfgLevels" checked/> Enable Levels</label>
+				</div>
+
+				<div class="mp-btn-row cfg-btn-row">
+					<button class="mp-btn mp-btn-back">← Back</button>
+					<button id="cfgBtnReset" class="mp-btn danger">Reset</button>
+					<button id="cfgBtnSave" class="mp-btn primary">Save & Apply</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- ═══ Level Select Screen ═══ -->
+		<div id="mpLevelSelectScreen" class="mp-screen" style="display:none;">
+			<div class="mp-panel lvl-select-panel">
+				<div class="mp-panel-title">🏰 CAMPAIGN LEVELS</div>
+				<div id="lvlTotalStars" class="lvl-total-stars">⭐ 0 / 60</div>
+				<div id="levelGrid" class="lvl-grid">
+					<!-- Dynamically populated by GameLevels.buildLevelSelectUI() -->
+				</div>
+				<div class="mp-btn-row" style="margin-top:16px;">
+					<button class="mp-btn mp-btn-back">← Back</button>
+					<button id="lvlResetProgress" class="mp-btn danger">Reset Progress</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- ═══ Level Result Overlay ═══ -->
+		<div id="levelResultOverlay">
+			<!-- Dynamically populated by GameLevels.showLevelResults() -->
+		</div>
+
+		<!-- ═══ In-Game HUD ═══ -->
+		<div id="gameHUD">
+			<div id="livesDisplay">
+				<span class="heart" data-index="0">&#10084;&#65039;</span>
+				<span class="heart" data-index="1">&#10084;&#65039;</span>
+				<span class="heart" data-index="2">&#10084;&#65039;</span>
+			</div>
+			<div id='highScoreInGameText'>
+				<div id='highScoreInGameTextHeader'>BEST</div>
+				<div id='currentHighScore'>0</div>
+			</div>
+			<div id="hudButtons">
+				<img id="openSideBar" class='helpText game-btn-img' src="./images/btn_help.svg" style="width:42px;height:42px;cursor:pointer;filter:brightness(0) invert(1);opacity:0.7;"/>
+			</div>
+		</div>
+
+		<!-- Bottom HUD -->
+		<div id="bottomHUD">
+			<img id='restartBtn' src="./images/btn_restart.svg" style="width:42px;height:42px;cursor:pointer;filter:brightness(0) invert(1);opacity:0.7;"/>
+			<div id="quitBtn" title="Quit to Menu">✕</div>
+			<img id="pauseBtn" src="./images/btn_pause.svg" style="width:42px;height:42px;cursor:pointer;filter:brightness(0) invert(1);opacity:0.7;"/>
+		</div>
+
+		<!-- ═══ Level Display (in-game) ═══ -->
+		<div id="levelDisplay">
+			<div id="levelNumber">LVL 1</div>
+			<div id="levelProgressBar"><div id="levelProgressFill"></div></div>
+			<div id="levelName">Beginner</div>
+		</div>
+
+		<!-- ═══ Power-Up Bar (in-game) ═══ -->
+		<div id="powerUpBar">
+			<button class="pu-btn" id="pu_hammer" data-power="hammer" title="Hammer - Clear a side (Key: 1)">
+				<span class="pu-icon">🔨</span>
+				<span class="pu-count">1</span>
+				<span class="pu-key">1</span>
+			</button>
+			<button class="pu-btn" id="pu_freeze" data-power="freeze" title="Freeze - Stop blocks 5s (Key: 2)">
+				<span class="pu-icon">❄️</span>
+				<span class="pu-count">1</span>
+				<span class="pu-key">2</span>
+			</button>
+			<button class="pu-btn" id="pu_colorBomb" data-power="colorBomb" title="Color Bomb - Clear a color (Key: 3)">
+				<span class="pu-icon">💣</span>
+				<span class="pu-count">1</span>
+				<span class="pu-key">3</span>
+			</button>
+		</div>
+
+		<!-- ═══ Level Up Banner ═══ -->
+		<div id="levelUpBanner"></div>
+
+		<!-- ═══ Power-Up Effect Text ═══ -->
+		<div id="powerUpEffect"></div>
+
+		<!-- ═══ Freeze Overlay ═══ -->
+		<div id="freezeOverlay"></div>
+
+		<!-- Life Lost Effects -->
+		<div id="lifeLostOverlay"></div>
+		<div id="lifeLostText"></div>
+
+		<!-- Overlays -->
+		<div id="overlay" class="faded overlay"></div>
+		<div id='startBtn'></div>
+		<div id="helpScreen" class='unselectable'>
+			<div id='inst_main_body'></div>
+		</div>
+		<div class="faded overlay"></div>
+		<div id='HIGHSCORE'>HIGH SCORE</div>
+		<div id="gameoverscreen">
+			<div id='container'>
+				<div id='gameOverBox' class='GOTitle'>GAME OVER</div>
+				<div id='cScore'>0</div>
+				<div id='highScoresTitle' class='GOTitle'>HIGH SCORES</div>
+				<div class='score'><span class='scoreNum'>1.</span> <div id="1place" style="display:inline;">0</div></div>
+				<div class='score'><span class='scoreNum'>2.</span> <div id="2place" style="display:inline;">0</div></div>
+				<div class='score'><span class='scoreNum'>3.</span> <div id="3place" style="display:inline;">0</div></div>
+			</div>
+			<div id='bottomContainer'>
+				<div class="go-btn-row">
+					<img id='restart' src='./images/btn_restart.svg' height='50px' title='Play Again'/>
+					<div id='goHomeBtn' title='Back to Menu'>🏠</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- ═══ Stats & Achievements Screen ═══ -->
+		<div id="mpStatsScreen" class="mp-screen" style="display:none;">
+			<div class="mp-panel stats-panel">
+				<div class="mp-panel-title">📊 STATS & BADGES</div>
+				<div id="statsContent"></div>
+				<div class="mp-btn-row" style="margin-top:16px;">
+					<button class="mp-btn mp-btn-back">← Back</button>
+					<button id="statsResetBtn" class="mp-btn danger">Reset Stats</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- ═══ Daily Challenge Screen ═══ -->
+		<div id="dailyChallengeScreen" class="mp-screen" style="display:none;">
+			<div class="mp-panel dc-panel">
+				<div class="mp-panel-title">📅 DAILY CHALLENGE</div>
+				<div id="dailyChallengeContent"></div>
+				<div class="dc-timer">Next challenge in: <span id="dcTimer">--</span></div>
+				<div class="mp-btn-row" style="margin-top:12px;">
+					<button class="mp-btn mp-btn-back">← Back</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- ═══ MP Toast Container ═══ -->
+		<div id="mpToastContainer"></div>
+
+		<script type="text/javascript" src='vendor/rrssb.min.js'></script>
+	</body>
+</html>
