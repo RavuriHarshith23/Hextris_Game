@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang='en'>
 	<head>
+		<meta charset="UTF-8">
 		<title>Hextris</title>
 		<meta name="description" content="An addictive puzzle game inspired by Tetris.">
 		<link rel="manifest" href="manifest.webmanifest">
@@ -98,9 +99,9 @@
 			<div class="opp-header">
 				<span id="opponentName">Opponent</span>
 				<span id="opponentLives">
-					<span class="opp-heart">❤️</span>
-					<span class="opp-heart">❤️</span>
-					<span class="opp-heart">❤️</span>
+					<span class="opp-heart"><svg width="16" height="16" viewBox="0 0 24 24" fill="#e74c3c"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
+					<span class="opp-heart"><svg width="16" height="16" viewBox="0 0 24 24" fill="#e74c3c"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
+					<span class="opp-heart"><svg width="16" height="16" viewBox="0 0 24 24" fill="#e74c3c"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
 				</span>
 			</div>
 			<canvas id="opponentCanvas" width="240" height="240"></canvas>
@@ -257,8 +258,11 @@
 				<div class="mp-panel-title">GAME LOBBY</div>
 
 				<div class="mp-room-info">
-					<span class="room-code-label">ROOM CODE:</span>
-					<span id="mpRoomCode" class="room-code">-----</span>
+					<span class="room-code-label">ROOM CODE</span>
+					<div class="room-code-row">
+						<span id="mpRoomCode" class="room-code">-----</span>
+						<button id="mpCopyRoomCode" class="copy-code-btn" title="Copy Code">COPY</button>
+					</div>
 					<span id="mpRoomMode" class="room-mode">Battle Mode</span>
 					<span id="mpRoomPlayerCount" class="room-players">0/2</span>
 				</div>
@@ -395,9 +399,9 @@
 		<!-- ═══ In-Game HUD ═══ -->
 		<div id="gameHUD">
 			<div id="livesDisplay">
-				<span class="heart" data-index="0">&#10084;&#65039;</span>
-				<span class="heart" data-index="1">&#10084;&#65039;</span>
-				<span class="heart" data-index="2">&#10084;&#65039;</span>
+				<span class="heart" data-index="0"><svg width="22" height="22" viewBox="0 0 24 24" fill="#e74c3c"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
+				<span class="heart" data-index="1"><svg width="22" height="22" viewBox="0 0 24 24" fill="#e74c3c"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
+				<span class="heart" data-index="2"><svg width="22" height="22" viewBox="0 0 24 24" fill="#e74c3c"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>
 			</div>
 			<div id='highScoreInGameText'>
 				<div id='highScoreInGameTextHeader'>BEST</div>
@@ -521,6 +525,7 @@
 					<span class="shop-coin-icon">🪙</span>
 					<span id="shopCoinCount" class="coin-count">0</span>
 				</div>
+				<div class="shop-earn-hint">Earn <strong>10 coins</strong> for every <strong>200 score</strong> in any game mode</div>
 				<div id="shopGrid" class="shop-grid">
 					<!-- Populated by CoinShop.buildShopUI() -->
 				</div>

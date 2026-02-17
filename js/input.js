@@ -112,7 +112,7 @@ function addKeyListeners() {
 		}
 	});
 
-	$("#pauseBtn").on('touchstart mousedown', function() {
+	$("#pauseBtn").on('click', function() {
 		if (gameState != 1 && gameState != -1) {
 			return;
 		}
@@ -125,7 +125,7 @@ function addKeyListeners() {
 	});
 
 	// ─── Quit / Home button ─────────────────────────────────
-	$('#quitBtn').on('touchstart mousedown', function(e) {
+	$('#quitBtn').on('click', function(e) {
 		e.preventDefault();
 		if (gameState === 1 || gameState === -1) {
 			swal({
@@ -163,7 +163,7 @@ function addKeyListeners() {
 	});
 
 	// ─── Game Over Home button ──────────────────────────────
-	$('#goHomeBtn').on('touchstart mousedown', function(e) {
+	$('#goHomeBtn').on('click', function(e) {
 		e.preventDefault();
 		gameState = 0;
 		score = 0;
@@ -182,7 +182,7 @@ function addKeyListeners() {
 		return false;
 	});
 
-	$("#colorBlindBtn").on('touchstart mousedown', function() {
+	$("#colorBlindBtn").on('click', function() {
 	window.colors = ["#8e44ad", "#f1c40f", "#3498db", "#d35400"];
 
 	window.hexColorsToTintedColors = {

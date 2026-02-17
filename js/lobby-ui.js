@@ -1,6 +1,6 @@
-﻿// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════════
 // Hextris Multiplayer - Lobby UI System
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════════
 
 (function() {
     'use strict';
@@ -8,7 +8,7 @@
     window.LobbyUI = {};
     var _chatMessages = [];
 
-    // â”€â”€â”€ Initialize â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ─── Initialize ─────────────────────────────────────────
     LobbyUI.init = function() {
         LobbyUI.bindEvents();
         LobbyUI.loadPlayerName();
@@ -18,7 +18,7 @@
         }
     };
 
-    // â”€â”€â”€ Load/Save Player Name â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ─── Load/Save Player Name ──────────────────────────────
     LobbyUI.loadPlayerName = function() {
         var saved = localStorage.getItem('hextris_playerName');
         if (saved) {
@@ -33,7 +33,7 @@
         MP.playerName = name;
     };
 
-    // â”€â”€â”€ Show/Hide Screens with transitions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ─── Show/Hide Screens with transitions ────────────────
     LobbyUI.showScreen = function(screenId) {
         $('#startBtn').hide();
         // Track previous screen for back navigation
@@ -56,14 +56,14 @@
         }
     };
 
+    // Track previous screen for back navigation
+    LobbyUI._prevScreen = 'mpMainMenu';
+
     LobbyUI.showMainMenu = function() {
         // Update coin display
         if (typeof CoinShop !== 'undefined') CoinShop.updateCoinDisplay();
         LobbyUI.showScreen('mpMainMenu');
     };
-
-    // Track previous screen for back navigation
-    LobbyUI._prevScreen = 'mpMainMenu';
 
     LobbyUI.showLobby = function() {
         LobbyUI.showScreen('mpLobbyScreen');
@@ -71,7 +71,7 @@
     };
 
 
-    // â”€â”€â”€ Bind UI Events â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ─── Bind UI Events ─────────────────────────────────────
     LobbyUI.bindEvents = function() {
         // Main menu buttons
         $('#mpBtnSinglePlayer').on('click', function(e) {
@@ -119,29 +119,6 @@
             e.preventDefault();
             if (typeof GameStats !== 'undefined') GameStats.buildStatsUI();
             LobbyUI.showScreen('mpStatsScreen');
-        });
-
-        // Shop
-        $('#mpBtnShop').on('click', function(e) {
-            e.preventDefault();
-            if (typeof CoinShop !== 'undefined') CoinShop.buildShopUI();
-            LobbyUI.showScreen('mpShopScreen');
-        });
-
-        // Game Modes
-        $('#mpBtnEndless').on('click', function(e) {
-            e.preventDefault();
-            if (typeof GameModes !== 'undefined') GameModes.start('endless');
-        });
-
-        $('#mpBtnChallenge').on('click', function(e) {
-            e.preventDefault();
-            if (typeof GameModes !== 'undefined') GameModes.start('challenge');
-        });
-
-        $('#mpBtnTimer').on('click', function(e) {
-            e.preventDefault();
-            if (typeof GameModes !== 'undefined') GameModes.start('timer');
         });
 
         // Stats Reset
@@ -226,6 +203,30 @@
             LobbyUI.showMainMenu();
         });
 
+        // Copy room code button
+        $('#mpCopyRoomCode').on('click', function(e) {
+            e.preventDefault();
+            var code = $('#mpRoomCode').text();
+            if (code && code !== '-----') {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(code).then(function() {
+                        $('#mpCopyRoomCode').text('COPIED!');
+                        setTimeout(function() { $('#mpCopyRoomCode').text('COPY'); }, 1500);
+                    });
+                } else {
+                    // Fallback for older browsers
+                    var temp = document.createElement('textarea');
+                    temp.value = code;
+                    document.body.appendChild(temp);
+                    temp.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(temp);
+                    $('#mpCopyRoomCode').text('COPIED!');
+                    setTimeout(function() { $('#mpCopyRoomCode').text('COPY'); }, 1500);
+                }
+            }
+        });
+
         // Chat
         $('#mpChatInput').on('keypress', function(e) {
             if (e.which === 13) {
@@ -284,7 +285,7 @@
         });
     };
 
-    // â”€â”€â”€ Create Room Logic â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ─── Create Room Logic ──────────────────────────────────
     LobbyUI.createRoom = function() {
         var mode = $('input[name="mpGameMode"]:checked').val() || 'battle';
         var penaltyEnabled = $('#mpPenaltyToggle').is(':checked');
@@ -306,7 +307,7 @@
 
 
 
-    // â”€â”€â”€ Single Player â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ─── Single Player ──────────────────────────────────────
     LobbyUI.startSinglePlayer = function() {
         MP.isMultiplayer = false;
         MP.mode = 'single';
@@ -329,12 +330,12 @@
 
 
 
-    // â”€â”€â”€ Update Lobby UI â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ─── Update Lobby UI ────────────────────────────────────
     LobbyUI.updateLobbyUI = function() {
         if (!MP.room) return;
 
         $('#mpRoomCode').text(MP.roomId);
-        $('#mpRoomMode').text(MP.room.mode === 'battle' ? 'âš”ï¸ Battle Mode' : 'ðŸ† Survival Race');
+        $('#mpRoomMode').text(MP.room.mode === 'battle' ? '⚔️ Battle Mode' : '🏆 Survival Race');
         $('#mpRoomPlayerCount').text(MP.room.players.length + '/' + MP.room.maxPlayers);
 
         var playerListHtml = '';
@@ -344,7 +345,7 @@
             playerListHtml += '<div class="mp-player-item' + (isMe ? ' me' : '') + (p.ready ? ' ready' : '') + '">';
             playerListHtml += '<span class="mp-player-name">' + escapeHtml(p.name) + '</span>';
             if (isHost) playerListHtml += '<span class="mp-player-badge host">HOST</span>';
-            playerListHtml += '<span class="mp-player-status">' + (p.ready ? 'âœ“ READY' : 'Waiting...') + '</span>';
+            playerListHtml += '<span class="mp-player-status">' + (p.ready ? '✓ READY' : 'Waiting...') + '</span>';
             playerListHtml += '</div>';
         });
         $('#mpPlayerList').html(playerListHtml);
@@ -353,11 +354,11 @@
         var myPlayer = MP.room.players.find(function(p) { return p.id === MP.playerId; });
         if (myPlayer) {
             $('#mpBtnReady').toggleClass('ready', myPlayer.ready);
-            $('#mpBtnReady').text(myPlayer.ready ? 'âœ“ READY' : 'READY UP');
+            $('#mpBtnReady').text(myPlayer.ready ? '✓ READY' : 'READY UP');
         }
     };
 
-    // â”€â”€â”€ Update Opponent Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ─── Update Opponent Panel ──────────────────────────────
     LobbyUI.updateOpponentPanel = function(data) {
         $('#opponentName').text(data.name || 'Opponent');
         $('#opponentScore').text(data.score || 0);
@@ -365,14 +366,16 @@
     };
 
     LobbyUI.updateOpponentLives = function(lives) {
+        var heartSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#e74c3c"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+        var emptyHeart = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
         var hearts = '';
         for (var i = 0; i < 3; i++) {
-            hearts += '<span class="opp-heart' + (i < lives ? '' : ' empty') + '">â¤ï¸</span>';
+            hearts += '<span class="opp-heart' + (i < lives ? '' : ' empty') + '">' + (i < lives ? heartSvg : emptyHeart) + '</span>';
         }
         $('#opponentLives').html(hearts);
     };
 
-    // â”€â”€â”€ Chat â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ─── Chat ───────────────────────────────────────────────
     LobbyUI.addChatMessage = function(data) {
         _chatMessages.push(data);
         if (_chatMessages.length > 50) _chatMessages.shift();
@@ -389,7 +392,7 @@
         if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
     };
 
-    // â”€â”€â”€ Countdown Display â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ─── Countdown Display ──────────────────────────────────
     LobbyUI.showCountdown = function(seconds) {
         var el = document.getElementById('mpCountdown');
         if (!el) return;
@@ -409,7 +412,7 @@
         }
     };
 
-    // â”€â”€â”€ Results Screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ─── Results Screen ─────────────────────────────────────
     LobbyUI.showResults = function(data) {
         var resultsHtml = '';
         var myResult = null;
@@ -421,14 +424,14 @@
             resultsHtml += '<span class="result-rank">#' + (i + 1) + '</span>';
             resultsHtml += '<span class="result-name">' + escapeHtml(r.name) + '</span>';
             resultsHtml += '<span class="result-score">' + r.score + '</span>';
-            if (r.isWinner) resultsHtml += '<span class="result-badge">ðŸ‘‘ WINNER</span>';
+            if (r.isWinner) resultsHtml += '<span class="result-badge">👑 WINNER</span>';
             resultsHtml += '</div>';
         });
 
         $('#mpResultsList').html(resultsHtml);
 
         if (myResult && myResult.isWinner) {
-            $('#mpResultTitle').text('ðŸŽ‰ VICTORY!').css('color', '#f1c40f');
+            $('#mpResultTitle').text('🎉 VICTORY!').css('color', '#f1c40f');
         } else {
             $('#mpResultTitle').text('DEFEAT').css('color', '#e74c3c');
         }
@@ -436,7 +439,7 @@
         LobbyUI.showScreen('mpResultsScreen');
     };
 
-    // â”€â”€â”€ Leaderboard Display â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ─── Leaderboard Display ────────────────────────────────
     LobbyUI.updateLeaderboard = function(data) {
         var html = '';
         if (!data.entries || data.entries.length === 0) {
@@ -444,9 +447,9 @@
         } else {
             data.entries.forEach(function(entry, i) {
                 var medal = '';
-                if (i === 0) medal = 'ðŸ¥‡';
-                else if (i === 1) medal = 'ðŸ¥ˆ';
-                else if (i === 2) medal = 'ðŸ¥‰';
+                if (i === 0) medal = '🥇';
+                else if (i === 1) medal = '🥈';
+                else if (i === 2) medal = '🥉';
 
                 html += '<div class="lb-row">';
                 html += '<span class="lb-rank">' + (medal || '#' + (i + 1)) + '</span>';
@@ -459,20 +462,20 @@
         $('#mpLeaderboardList').html(html);
     };
 
-    // â”€â”€â”€ Helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ─── Helper ─────────────────────────────────────────────
     function escapeHtml(str) {
         var div = document.createElement('div');
         div.textContent = str;
         return div.innerHTML;
     }
 
-    // â”€â”€â”€ MP Event Handlers (wire to MP callbacks) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ─── MP Event Handlers (wire to MP callbacks) ───────────
     MP.onRoomCreated = function(data) {
         LobbyUI.showLobby();
     };
 
     MP.onRoomJoined = function(data) {
-        // Name was already set during connection/page load â€” no need to re-emit setName
+        // Name was already set during connection/page load — no need to re-emit setName
         LobbyUI.showLobby();
     };
 

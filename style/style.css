@@ -1486,6 +1486,33 @@ button:focus {
 	letter-spacing: 4px;
 }
 
+.room-code-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	justify-content: center;
+}
+
+.copy-code-btn {
+	background: rgba(241, 196, 15, 0.15);
+	color: #f1c40f;
+	border: 1px solid rgba(241, 196, 15, 0.3);
+	border-radius: 6px;
+	padding: 4px 12px;
+	font-family: 'Exo 2', sans-serif;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 1px;
+	cursor: pointer;
+	touch-action: manipulation;
+	transition: background 0.2s, transform 0.1s;
+}
+
+.copy-code-btn:active {
+	background: rgba(241, 196, 15, 0.3);
+	transform: scale(0.95);
+}
+
 .room-mode {
 	color: rgba(255,255,255,0.6);
 	font-family: 'Exo 2', sans-serif;
@@ -2768,6 +2795,18 @@ button:focus {
 
 .shop-coin-icon {
 	font-size: 28px;
+}
+
+.shop-earn-hint {
+	color: rgba(255,255,255,0.45);
+	font-family: 'Exo 2', sans-serif;
+	font-size: 12px;
+	text-align: center;
+	margin-bottom: 18px;
+	letter-spacing: 0.3px;
+}
+.shop-earn-hint strong {
+	color: #f1c40f;
 }
 
 .shop-grid {
