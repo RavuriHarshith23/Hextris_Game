@@ -162,14 +162,6 @@
 						<span class="mc-icon">📅</span>
 						<span class="mc-label">Daily</span>
 					</button>
-					<button id="mpBtnEndless" class="mode-card mc-endless">
-						<span class="mc-icon">♾️</span>
-						<span class="mc-label">Endless</span>
-					</button>
-					<button id="mpBtnChallenge" class="mode-card mc-challenge">
-						<span class="mc-icon">🏆</span>
-						<span class="mc-label">Challenge</span>
-					</button>
 					<button id="mpBtnTimer" class="mode-card mc-timer">
 						<span class="mc-icon">⏱️</span>
 						<span class="mc-label">Timer</span>
@@ -525,11 +517,51 @@
 					<span class="shop-coin-icon">🪙</span>
 					<span id="shopCoinCount" class="coin-count">0</span>
 				</div>
-				<div class="shop-earn-hint">Earn <strong>10 coins</strong> for every <strong>200 score</strong> in any game mode</div>
+				<div class="shop-earn-info">
+					<div class="shop-earn-title">HOW TO EARN COINS</div>
+					<div class="shop-earn-item">🎯 <strong>+10 coins</strong> for every <strong>200 score</strong></div>
+					<div class="shop-earn-item">⏱️ <strong>Score ÷ 10</strong> bonus coins in Timer mode</div>
+					<div class="shop-earn-item">🔥 <strong>Random power-up</strong> every 500 score</div>
+					<div class="shop-earn-item">🎁 <strong>200 coins</strong> for new players</div>
+				</div>
 				<div id="shopGrid" class="shop-grid">
 					<!-- Populated by CoinShop.buildShopUI() -->
 				</div>
 				<div class="mp-btn-row" style="margin-top:16px;">
+					<button class="mp-btn mp-btn-back">← Back</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- ═══ Timer Mode Selection Screen ═══ -->
+		<div id="timerSelectScreen" class="mp-screen" style="display:none;">
+			<div class="mp-panel timer-select-panel">
+				<div class="mp-panel-title">⏱️ TIMER MODE</div>
+				<div class="timer-select-desc">Score as high as you can before time runs out!</div>
+				<div class="timer-select-label">SELECT DURATION</div>
+				<div class="timer-options">
+					<button class="timer-option-btn" data-time="30">
+						<span class="timer-opt-time">30</span>
+						<span class="timer-opt-unit">SEC</span>
+						<span class="timer-opt-diff">Quick</span>
+					</button>
+					<button class="timer-option-btn selected" data-time="60">
+						<span class="timer-opt-time">60</span>
+						<span class="timer-opt-unit">SEC</span>
+						<span class="timer-opt-diff">Normal</span>
+					</button>
+					<button class="timer-option-btn" data-time="120">
+						<span class="timer-opt-time">120</span>
+						<span class="timer-opt-unit">SEC</span>
+						<span class="timer-opt-diff">Long</span>
+					</button>
+				</div>
+				<div class="timer-coin-hint">Earn coins = your score ÷ 10</div>
+				<button id="timerStartBtn" class="menu-play-btn timer-start-btn">
+					<span class="play-btn-icon">▶</span>
+					<span class="play-btn-text">START</span>
+				</button>
+				<div class="mp-btn-row" style="margin-top:12px;">
 					<button class="mp-btn mp-btn-back">← Back</button>
 				</div>
 			</div>

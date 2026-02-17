@@ -1042,12 +1042,6 @@ button:focus {
 .mc-daily { border-color: rgba(243,156,18,0.25); }
 .mc-daily:hover { border-color: #f39c12; background: rgba(243,156,18,0.12); box-shadow: 0 4px 20px rgba(243,156,18,0.2); }
 
-.mc-endless { border-color: rgba(155,89,182,0.25); }
-.mc-endless:hover { border-color: #9b59b6; background: rgba(155,89,182,0.12); box-shadow: 0 4px 20px rgba(155,89,182,0.2); }
-
-.mc-challenge { border-color: rgba(230,126,34,0.25); }
-.mc-challenge:hover { border-color: #e67e22; background: rgba(230,126,34,0.12); box-shadow: 0 4px 20px rgba(230,126,34,0.2); }
-
 .mc-timer { border-color: rgba(231,76,60,0.25); }
 .mc-timer:hover { border-color: #e74c3c; background: rgba(231,76,60,0.12); box-shadow: 0 4px 20px rgba(231,76,60,0.2); }
 
@@ -2797,16 +2791,119 @@ button:focus {
 	font-size: 28px;
 }
 
-.shop-earn-hint {
-	color: rgba(255,255,255,0.45);
+.shop-earn-info {
+	background: rgba(241, 196, 15, 0.06);
+	border: 1px solid rgba(241, 196, 15, 0.15);
+	border-radius: 10px;
+	padding: 12px 16px;
+	margin-bottom: 18px;
+}
+.shop-earn-title {
+	color: #f1c40f;
+	font-family: 'Exo 2', sans-serif;
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 1.5px;
+	margin-bottom: 8px;
+	text-align: center;
+}
+.shop-earn-item {
+	color: rgba(255,255,255,0.6);
+	font-family: 'Exo 2', sans-serif;
+	font-size: 12px;
+	padding: 3px 0;
+}
+.shop-earn-item strong {
+	color: #f1c40f;
+}
+
+/* ─── Timer Selection Screen ─────────────────────────────── */
+.timer-select-panel {
+	max-width: 420px;
+}
+.timer-select-desc {
+	color: rgba(255,255,255,0.5);
+	font-family: 'Exo 2', sans-serif;
+	font-size: 13px;
+	text-align: center;
+	margin-bottom: 20px;
+}
+.timer-select-label {
+	color: rgba(255,255,255,0.4);
+	font-family: 'Exo 2', sans-serif;
+	font-size: 11px;
+	letter-spacing: 2px;
+	font-weight: 700;
+	text-align: center;
+	margin-bottom: 12px;
+}
+.timer-options {
+	display: flex;
+	gap: 12px;
+	justify-content: center;
+	margin-bottom: 20px;
+}
+.timer-option-btn {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background: rgba(255,255,255,0.04);
+	border: 2px solid rgba(255,255,255,0.1);
+	border-radius: 14px;
+	padding: 18px 24px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	touch-action: manipulation;
+	min-width: 90px;
+}
+.timer-option-btn:hover {
+	background: rgba(255,255,255,0.08);
+	border-color: rgba(255,255,255,0.2);
+}
+.timer-option-btn.selected {
+	background: rgba(231, 76, 60, 0.15);
+	border-color: #e74c3c;
+	box-shadow: 0 0 20px rgba(231, 76, 60, 0.2);
+}
+.timer-opt-time {
+	color: #fff;
+	font-family: 'Exo 2', sans-serif;
+	font-size: 32px;
+	font-weight: 700;
+	line-height: 1;
+}
+.timer-option-btn.selected .timer-opt-time {
+	color: #e74c3c;
+}
+.timer-opt-unit {
+	color: rgba(255,255,255,0.4);
+	font-family: 'Exo 2', sans-serif;
+	font-size: 10px;
+	letter-spacing: 2px;
+	margin-top: 2px;
+}
+.timer-opt-diff {
+	color: rgba(255,255,255,0.35);
+	font-family: 'Exo 2', sans-serif;
+	font-size: 10px;
+	margin-top: 6px;
+}
+.timer-option-btn.selected .timer-opt-diff {
+	color: rgba(231, 76, 60, 0.7);
+}
+.timer-coin-hint {
+	color: rgba(241, 196, 15, 0.6);
 	font-family: 'Exo 2', sans-serif;
 	font-size: 12px;
 	text-align: center;
-	margin-bottom: 18px;
-	letter-spacing: 0.3px;
+	margin-bottom: 16px;
 }
-.shop-earn-hint strong {
-	color: #f1c40f;
+.timer-start-btn {
+	margin: 0 auto 8px auto;
+	display: flex !important;
+	width: auto;
+	padding: 12px 40px;
+	font-size: 16px;
 }
 
 .shop-grid {
@@ -3181,7 +3278,8 @@ button:focus {
    ═══════════════════════════════════════════════════════════════ */
 
 button, .mp-btn, .menu-tile, .mode-card, .menu-play-btn,
-.pu-btn, .lb-tab, .mp-btn-back, .dc-play-btn, .shop-buy-btn {
+.pu-btn, .lb-tab, .mp-btn-back, .dc-play-btn, .shop-buy-btn,
+.timer-option-btn, .timer-start-btn {
 	touch-action: manipulation;
 	-webkit-tap-highlight-color: transparent;
 }
