@@ -9,10 +9,9 @@ $(document).ready(function() {
 	}
 	if (typeof LobbyUI !== 'undefined') {
 		LobbyUI.init();
-		// Show multiplayer main menu on startup (hide game underneath)
+		// Show multiplayer main menu on startup
 		setTimeout(function() {
-			$('#startBtn').hide();
-			$('#mpMainMenu').fadeIn(300);
+			LobbyUI.showMainMenu();
 		}, 100);
 	}
 });

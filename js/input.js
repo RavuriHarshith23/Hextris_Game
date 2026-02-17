@@ -148,6 +148,7 @@ function addKeyListeners() {
 					window.gameMode = null;
 					window.dailyTargetScore = null;
 					if (typeof GameLevels !== 'undefined') GameLevels.clearActive();
+					if (typeof GameModes !== 'undefined') GameModes.clear();
 					if (typeof MP !== 'undefined' && MP.isMultiplayer) {
 						MP.leaveRoom();
 						$('#opponentPanel').hide();
@@ -175,6 +176,7 @@ function addKeyListeners() {
 		window.gameMode = null;
 		window.dailyTargetScore = null;
 		if (typeof GameLevels !== 'undefined') GameLevels.clearActive();
+		if (typeof GameModes !== 'undefined') GameModes.clear();
 		if (typeof Particles !== 'undefined') Particles.clear();
 		if (typeof LobbyUI !== 'undefined') LobbyUI.showMainMenu();
 		return false;

@@ -80,6 +80,8 @@
 		<script type='text/javascript' src='js/particles.js'></script>
 		<script type='text/javascript' src='js/achievements.js'></script>
 		<script type='text/javascript' src='js/daily-challenge.js'></script>
+		<script type='text/javascript' src='js/coin-shop.js'></script>
+		<script type='text/javascript' src='js/game-modes.js'></script>
 		<!-- Background Music -->
 		<script type='text/javascript' src='js/music.js'></script>
 	</head>
@@ -124,47 +126,71 @@
 					<div class="float-hex hex6">⬡</div>
 				</div>
 
+				<!-- Top Bar: Coin + Player Name -->
+				<div class="menu-top-bar">
+					<div class="menu-coin-display">
+						<span class="menu-coin-icon">🪙</span>
+						<span id="menuCoinCount" class="coin-count">0</span>
+					</div>
+					<div class="menu-player-pill">
+						<input type="text" id="mpPlayerNameInput" placeholder="Player..." maxlength="16" autocomplete="off"/>
+					</div>
+				</div>
+
 				<!-- Logo with glow -->
 				<div class="menu-logo">
+					<div class="menu-logo-glow"></div>
 					<div class="mp-title">HEXTRIS</div>
-					<div class="mp-tagline">Match • Rotate • Conquer</div>
+					<div class="mp-tagline">Match · Rotate · Conquer</div>
 				</div>
 
-				<div class="mp-name-row">
-					<label for="mpPlayerNameInput">YOUR NAME</label>
-					<input type="text" id="mpPlayerNameInput" placeholder="Enter name..." maxlength="16" autocomplete="off"/>
-				</div>
+				<!-- Big Central Play Button -->
+				<button id="mpBtnSinglePlayer" class="menu-play-btn">
+					<span class="play-btn-glow"></span>
+					<span class="play-btn-icon">▶</span>
+					<span class="play-btn-text">PLAY</span>
+				</button>
 
-				<div class="mp-profile-stats">
-					<div class="mp-stat"><span class="mp-stat-label">Rating</span><span id="mpProfileRating" class="mp-stat-value">1000</span></div>
-					<div class="mp-stat"><span class="mp-stat-label">Wins</span><span id="mpProfileWins" class="mp-stat-value">0</span></div>
-					<div class="mp-stat"><span class="mp-stat-label">Losses</span><span id="mpProfileLosses" class="mp-stat-value">0</span></div>
-					<div class="mp-stat"><span class="mp-stat-label">Best</span><span id="mpProfileBest" class="mp-stat-value">0</span></div>
-				</div>
-
-				<!-- Main Action Buttons -->
-				<div class="menu-hero-row">
-					<button id="mpBtnSinglePlayer" class="menu-hero-btn hero-play">
-						<span class="hero-icon">▶</span>
-						<span class="hero-label">PLAY</span>
+				<!-- Mode Cards -->
+				<div class="menu-mode-cards">
+					<button id="mpBtnLevels" class="mode-card mc-campaign">
+						<span class="mc-icon">🏰</span>
+						<span class="mc-label">Campaign</span>
 					</button>
-					<button id="mpBtnLevels" class="menu-hero-btn hero-campaign">
-						<span class="hero-icon">🏰</span>
-						<span class="hero-label">CAMPAIGN</span>
+					<button id="mpBtnDailyChallenge" class="mode-card mc-daily">
+						<span class="mc-icon">📅</span>
+						<span class="mc-label">Daily</span>
 					</button>
-					<button id="mpBtnDailyChallenge" class="menu-hero-btn hero-daily">
-						<span class="hero-icon">📅</span>
-						<span class="hero-label">DAILY</span>
+					<button id="mpBtnEndless" class="mode-card mc-endless">
+						<span class="mc-icon">♾️</span>
+						<span class="mc-label">Endless</span>
+					</button>
+					<button id="mpBtnChallenge" class="mode-card mc-challenge">
+						<span class="mc-icon">🏆</span>
+						<span class="mc-label">Challenge</span>
+					</button>
+					<button id="mpBtnTimer" class="mode-card mc-timer">
+						<span class="mc-icon">⏱️</span>
+						<span class="mc-label">Timer</span>
 					</button>
 				</div>
 
-				<!-- Secondary buttons in grid -->
+				<!-- Quick Actions Grid -->
 				<div class="menu-grid">
-					<button id="mpBtnCreateRoom" class="menu-tile"><span class="tile-icon">🏠</span><span class="tile-label">Create Room</span></button>
-					<button id="mpBtnJoinRoom" class="menu-tile"><span class="tile-icon">🚪</span><span class="tile-label">Join Room</span></button>
-					<button id="mpBtnLeaderboard" class="menu-tile"><span class="tile-icon">🏆</span><span class="tile-label">Leaderboard</span></button>
+					<button id="mpBtnShop" class="menu-tile"><span class="tile-icon">🛒</span><span class="tile-label">Shop</span></button>
+					<button id="mpBtnCreateRoom" class="menu-tile"><span class="tile-icon">🏠</span><span class="tile-label">Create</span></button>
+					<button id="mpBtnJoinRoom" class="menu-tile"><span class="tile-icon">🚪</span><span class="tile-label">Join</span></button>
+					<button id="mpBtnLeaderboard" class="menu-tile"><span class="tile-icon">🏆</span><span class="tile-label">Ranks</span></button>
 					<button id="mpBtnStats" class="menu-tile"><span class="tile-icon">📊</span><span class="tile-label">Stats</span></button>
 					<button id="mpBtnSettings" class="menu-tile"><span class="tile-icon">⚙️</span><span class="tile-label">Settings</span></button>
+				</div>
+
+				<!-- Mini Profile Stats -->
+				<div class="mp-profile-stats">
+					<div class="mp-stat"><span class="mp-stat-label">Best</span><span id="mpProfileBest" class="mp-stat-value">0</span></div>
+					<div class="mp-stat"><span class="mp-stat-label">Wins</span><span id="mpProfileWins" class="mp-stat-value">0</span></div>
+					<div class="mp-stat"><span class="mp-stat-label">Rating</span><span id="mpProfileRating" class="mp-stat-value">1000</span></div>
+					<div class="mp-stat" style="display:none"><span class="mp-stat-label">Losses</span><span id="mpProfileLosses" class="mp-stat-value">0</span></div>
 				</div>
 
 				<div id="mpConnectionStatus" class="disconnected">Connecting...</div>
@@ -352,10 +378,8 @@
 		<div id="mpLevelSelectScreen" class="mp-screen" style="display:none;">
 			<div class="mp-panel lvl-select-panel">
 				<div class="mp-panel-title">🏰 CAMPAIGN LEVELS</div>
-				<div id="lvlTotalStars" class="lvl-total-stars">⭐ 0 / 60</div>
-				<div id="levelGrid" class="lvl-grid">
-					<!-- Dynamically populated by GameLevels.buildLevelSelectUI() -->
-				</div>
+				<div id="lvlTotalStars" class="lvl-total-stars">✅ 0 / 20 completed</div>
+				<div id="levelGrid" class="lvl-grid"></div>
 				<div class="mp-btn-row" style="margin-top:16px;">
 					<button class="mp-btn mp-btn-back">← Back</button>
 					<button id="lvlResetProgress" class="mp-btn danger">Reset Progress</button>
@@ -410,10 +434,20 @@
 				<span class="pu-count">1</span>
 				<span class="pu-key">2</span>
 			</button>
-			<button class="pu-btn" id="pu_colorBomb" data-power="colorBomb" title="Color Bomb - Clear a color (Key: 3)">
+			<button class="pu-btn" id="pu_colorBomb" data-power="colorBomb" title="Bomb - Clear a color (Key: 3)">
 				<span class="pu-icon">💣</span>
 				<span class="pu-count">1</span>
 				<span class="pu-key">3</span>
+			</button>
+			<button class="pu-btn" id="pu_shield" data-power="shield" title="Shield - Block overflow (Key: 4)">
+				<span class="pu-icon">🛡️</span>
+				<span class="pu-count">0</span>
+				<span class="pu-key">4</span>
+			</button>
+			<button class="pu-btn" id="pu_slowTime" data-power="slowTime" title="Slow Time - Slow blocks (Key: 5)">
+				<span class="pu-icon">⏳</span>
+				<span class="pu-count">0</span>
+				<span class="pu-key">5</span>
 			</button>
 		</div>
 
@@ -478,6 +512,53 @@
 				</div>
 			</div>
 		</div>
+
+		<!-- ═══ Shop Screen ═══ -->
+		<div id="mpShopScreen" class="mp-screen" style="display:none;">
+			<div class="mp-panel shop-panel">
+				<div class="mp-panel-title">🪙 POWER-UP SHOP</div>
+				<div class="shop-coins-row">
+					<span class="shop-coin-icon">🪙</span>
+					<span id="shopCoinCount" class="coin-count">0</span>
+				</div>
+				<div id="shopGrid" class="shop-grid">
+					<!-- Populated by CoinShop.buildShopUI() -->
+				</div>
+				<div class="mp-btn-row" style="margin-top:16px;">
+					<button class="mp-btn mp-btn-back">← Back</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- ═══ Mode HUD (in-game overlay for game modes) ═══ -->
+		<div id="modeHUD">
+			<div id="modeHUDLabel">ENDLESS</div>
+			<div id="modeHUDInfo"></div>
+		</div>
+
+		<!-- ═══ Mode Result Overlay ═══ -->
+		<div id="modeResultOverlay">
+			<div class="mode-result-box">
+				<div id="modeResultTitle" class="mode-result-title">MODE COMPLETE</div>
+				<div id="modeResultBody" class="mode-result-body"></div>
+				<div class="mode-result-btns">
+					<button id="modeResultHome" class="mp-btn">🏠 Home</button>
+					<button id="modeResultRetry" class="mp-btn primary">🔄 Retry</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- ═══ Shield Indicator ═══ -->
+		<div id="shieldIndicator">
+			<span class="shield-icon">🛡️</span>
+			<span class="shield-text">SHIELD ACTIVE</span>
+		</div>
+
+		<!-- ═══ Slow Time Overlay ═══ -->
+		<div id="slowOverlay"></div>
+
+		<!-- ═══ Coin Float Effect ═══ -->
+		<div id="coinFloater" style="display:none;">+10 🪙</div>
 
 		<!-- ═══ MP Toast Container ═══ -->
 		<div id="mpToastContainer"></div>

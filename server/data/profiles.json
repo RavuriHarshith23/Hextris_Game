@@ -53,5 +53,16 @@
     "bestScore": 141,
     "totalScore": 141,
     "createdAt": 1771264980448
+  },
+  "Player_6130": {
+    "name": "Player_6130",
+    "rating": 1000,
+    "wins": 1,
+    "losses": 0,
+    "draws": 0,
+    "gamesPlayed": 1,
+    "bestScore": 9,
+    "totalScore": 9,
+    "createdAt": 1771298931995
   }
 }

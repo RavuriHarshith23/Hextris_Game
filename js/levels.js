@@ -194,7 +194,7 @@
             if (saved) _progress = JSON.parse(saved);
         } catch (e) { _progress = {}; }
         if (!_progress[1]) {
-            _progress[1] = { unlocked: true, bestScore: 0, stars: 0 };
+            _progress[1] = { unlocked: true, bestScore: 0, completed: false };
         }
     }
 
@@ -202,11 +202,8 @@
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(_progress)); } catch (e) {}
     }
 
-    function calcStars(level, score) {
-        if (score < level.target) return 0;
-        if (score >= level.target * 2) return 3;
-        if (score >= level.target * 1.5) return 2;
-        return 1;
+    function didPass(level, score) {
+        return score >= level.target;
     }
 
     // ─── Public Getters ─────────────────────────────────────
@@ -215,11 +212,11 @@
     GameLevels.getActiveLevel = function () { return _activeLevel; };
     GameLevels.isUnlocked = function (id) { return _progress[id] && _progress[id].unlocked; };
     GameLevels.getBestScore = function (id) { return (_progress[id] && _progress[id].bestScore) || 0; };
-    GameLevels.getStars = function (id) { return (_progress[id] && _progress[id].stars) || 0; };
+    GameLevels.isCompleted = function (id) { return _progress[id] && _progress[id].completed; };
 
-    GameLevels.getTotalStars = function () {
+    GameLevels.getCompletedCount = function () {
         var t = 0;
-        for (var k in _progress) t += (_progress[k].stars || 0);
+        for (var k in _progress) if (_progress[k].completed) t++;
         return t;
     };
 
@@ -290,31 +287,34 @@
     GameLevels.completeLevel = function (finalScore) {
         if (!_activeLevel) return null;
         var lvl = _activeLevel;
-        var stars = calcStars(lvl, finalScore);
-        var passed = stars > 0;
+        var passed = didPass(lvl, finalScore);
 
         if (!_progress[lvl.id]) {
-            _progress[lvl.id] = { unlocked: true, bestScore: 0, stars: 0 };
+            _progress[lvl.id] = { unlocked: true, bestScore: 0, completed: false };
         }
         if (finalScore > _progress[lvl.id].bestScore) {
             _progress[lvl.id].bestScore = finalScore;
         }
-        if (stars > _progress[lvl.id].stars) {
-            _progress[lvl.id].stars = stars;
-        }
+        if (passed) _progress[lvl.id].completed = true;
 
         // Unlock next
         var nextId = lvl.id + 1;
         if (passed && nextId <= LEVELS.length) {
             if (!_progress[nextId]) {
-                _progress[nextId] = { unlocked: true, bestScore: 0, stars: 0 };
+                _progress[nextId] = { unlocked: true, bestScore: 0, completed: false };
             } else {
                 _progress[nextId].unlocked = true;
             }
         }
 
+        // Award coins
+        if (passed && typeof CoinShop !== 'undefined') {
+            var reward = 50 + lvl.id * 10;
+            CoinShop.addCoins(reward);
+        }
+
         saveProgress();
-        return { level: lvl, score: finalScore, stars: stars, passed: passed, nextUnlocked: passed && nextId <= LEVELS.length };
+        return { level: lvl, score: finalScore, passed: passed, nextUnlocked: passed && nextId <= LEVELS.length };
     };
 
     // ─── Clear active level ─────────────────────────────────
@@ -326,7 +326,7 @@
     };
 
     GameLevels.resetProgress = function () {
-        _progress = { 1: { unlocked: true, bestScore: 0, stars: 0 } };
+        _progress = { 1: { unlocked: true, bestScore: 0, completed: false } };
         saveProgress();
     };
 
@@ -336,17 +336,17 @@
         if (!grid) return;
         grid.innerHTML = '';
 
-        var totalStars = GameLevels.getTotalStars();
+        var completed = GameLevels.getCompletedCount();
         var starHeader = document.getElementById('lvlTotalStars');
-        if (starHeader) starHeader.textContent = '⭐ ' + totalStars + ' / ' + (LEVELS.length * 3);
+        if (starHeader) starHeader.textContent = '✅ ' + completed + ' / ' + LEVELS.length + ' completed';
 
         LEVELS.forEach(function (lvl) {
             var unlocked = GameLevels.isUnlocked(lvl.id);
-            var stars = GameLevels.getStars(lvl.id);
+            var done = GameLevels.isCompleted(lvl.id);
             var best = GameLevels.getBestScore(lvl.id);
 
             var card = document.createElement('div');
-            card.className = 'lvl-card' + (unlocked ? '' : ' locked');
+            card.className = 'lvl-card' + (unlocked ? '' : ' locked') + (done ? ' completed' : '');
             card.dataset.levelId = lvl.id;
 
             var colorBar = '<div class="lvl-color-bar">';
@@ -355,20 +355,16 @@
             }
             colorBar += '</div>';
 
-            var starsHtml = '<div class="lvl-stars">';
-            for (var s = 0; s < 3; s++) {
-                starsHtml += '<span class="lvl-star ' + (s < stars ? 'earned' : '') + '">★</span>';
-            }
-            starsHtml += '</div>';
+            var statusBadge = done ? '<div class="lvl-done-badge">✅</div>' : '';
 
             var shapeIcon = lvl.sides === 5 ? '⬠' : (lvl.sides === 8 ? '⯃' : '⬡');
 
             card.innerHTML =
                 colorBar +
                 '<div class="lvl-icon">' + (unlocked ? lvl.icon : '🔒') + '</div>' +
+                statusBadge +
                 '<div class="lvl-num">Level ' + lvl.id + '</div>' +
                 '<div class="lvl-name">' + lvl.name + '</div>' +
-                starsHtml +
                 (unlocked && best > 0 ? '<div class="lvl-best">Best: ' + best + '</div>' : '') +
                 '<div class="lvl-meta">' +
                     '<span class="lvl-shape">' + shapeIcon + '</span>' +
@@ -398,26 +394,24 @@
         if (!overlay) return;
 
         var lvl = result.level;
-        var starsHtml = '';
-        for (var s = 0; s < 3; s++) {
-            var delay = s * 0.3;
-            starsHtml += '<span class="lvl-result-star ' + (s < result.stars ? 'earned' : '') + '" style="animation-delay:' + delay + 's">★</span>';
-        }
+        var coinReward = result.passed ? (50 + lvl.id * 10) : 0;
 
         var nextBtn = '';
         if (result.passed && lvl.id < LEVELS.length) {
-            nextBtn = '<button class="mp-btn primary lvl-next-btn" data-next="' + (lvl.id + 1) + '">▶ Next Level</button>';
+            nextBtn = '<button class="mp-btn primary lvl-next-btn" data-next="' + (lvl.id + 1) + '">▶ Continue</button>';
         }
 
         overlay.innerHTML =
             '<div class="lvl-result-panel">' +
-                '<div class="lvl-result-title">' + (result.passed ? '🎉 LEVEL COMPLETE!' : '💔 NOT QUITE...') + '</div>' +
+                '<div class="lvl-result-icon">' + (result.passed ? '🎉' : '💔') + '</div>' +
+                '<div class="lvl-result-title">' + (result.passed ? 'Level Cleared' : 'Not Quite...') + '</div>' +
+                '<div class="lvl-result-subtitle">' + (result.passed ? 'Congratulations!' : 'Keep trying!') + '</div>' +
                 '<div class="lvl-result-level">Level ' + lvl.id + ' — ' + lvl.name + '</div>' +
-                '<div class="lvl-result-score">' + scr + '</div>' +
-                '<div class="lvl-result-target">' + (result.passed ? 'Target: ' + lvl.target + ' ✓' : 'Need ' + (lvl.target - scr) + ' more to pass') + '</div>' +
-                '<div class="lvl-result-stars-row">' + starsHtml + '</div>' +
+                '<div class="lvl-result-score">' + scr + ' pts</div>' +
+                '<div class="lvl-result-target">' + (result.passed ? 'Target: ' + lvl.target + ' ✓' : 'Need ' + (lvl.target - scr) + ' more') + '</div>' +
+                (result.passed && coinReward > 0 ? '<div class="lvl-result-coins">🪙 +' + coinReward + ' coins earned!</div>' : '') +
                 '<div class="lvl-result-btns">' +
-                    '<button class="mp-btn lvl-menu-btn">📋 Levels</button>' +
+                    '<button class="mp-btn lvl-menu-btn">🏠 Home</button>' +
                     '<button class="mp-btn accent lvl-retry-btn" data-level="' + lvl.id + '">🔄 Retry</button>' +
                     nextBtn +
                 '</div>' +

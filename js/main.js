@@ -149,6 +149,8 @@ function init(b) {
 	if (typeof Particles !== 'undefined') Particles.clear();
 	// Reset power-up milestone tracker
 	if (typeof PowerUps !== 'undefined' && typeof PowerUps.resetMilestones === 'function') PowerUps.resetMilestones();
+	// Reset coin score milestone tracker
+	if (typeof CoinShop !== 'undefined' && typeof CoinShop.resetScoreMilestone === 'function') CoinShop.resetScoreMilestone();
 
 	settings.blockHeight = settings.baseBlockHeight * settings.scale;
 	settings.hexWidth = settings.baseHexWidth * settings.scale;
@@ -324,7 +326,7 @@ function animLoop() {
 						}, function() {
 							window.gameMode = null;
 							window.dailyTargetScore = null;
-							$('#mpMainMenu').fadeIn(300);
+							if (typeof LobbyUI !== 'undefined') LobbyUI.showMainMenu();
 						});
 					}, 800);
 				}
@@ -337,6 +339,14 @@ function animLoop() {
 				// Check score milestone for power-up rewards
 				if (typeof PowerUps !== 'undefined' && typeof PowerUps.checkScoreMilestone === 'function') {
 					PowerUps.checkScoreMilestone(score);
+				}
+				// Check coin rewards from score
+				if (typeof CoinShop !== 'undefined' && typeof CoinShop.checkScoreReward === 'function') {
+					CoinShop.checkScoreReward(score);
+				}
+				// Update game modes
+				if (typeof GameModes !== 'undefined' && GameModes.getActiveMode()) {
+					GameModes.update(score);
 				}
 			}
 			else{
@@ -431,6 +441,12 @@ function isInfringing(hex) {
 
 function checkGameOver() {
 	if (isInfringing(MainHex)) {
+		// Check if shield absorbs the overflow
+		if (typeof PowerUps !== 'undefined' && PowerUps.tryShield && PowerUps.tryShield()) {
+			clearInfringingBlocks(MainHex);
+			return false;
+		}
+
 		lives--;
 		updateLivesDisplay();
 		
@@ -461,6 +477,14 @@ function checkGameOver() {
 				var mode = (typeof MP !== 'undefined' && MP.mode) ? MP.mode : 'single';
 				var name = (typeof MP !== 'undefined' && MP.playerName) ? MP.playerName : 'Player';
 				Leaderboard.submitScore(name, score, mode);
+			}
+
+			// Check if a game mode handles the game-over display
+			if (typeof GameModes !== 'undefined' && GameModes.getActiveMode()) {
+				if (GameModes.onGameOver(score)) {
+					gameOverDisplay();
+					return true;
+				}
 			}
 
 			// If in level mode, show level results instead of standard game over
