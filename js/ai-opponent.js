@@ -96,6 +96,7 @@
     // ─── Get AI State ───────────────────────────────────────
     AIOpponent.getState = function() {
         return {
+            playerId: 'ai',
             name: 'AI Bot (' + _aiState.difficulty + ')',
             score: _aiState.score,
             lives: _aiState.lives,
@@ -133,6 +134,11 @@
                     // Notify game that AI lost
                     if (typeof LobbyUI !== 'undefined') {
                         LobbyUI.updateOpponentLives(0);
+                        // Stop scoreboard refresh
+                        if (LobbyUI._sbInterval) {
+                            clearInterval(LobbyUI._sbInterval);
+                            LobbyUI._sbInterval = null;
+                        }
                         setTimeout(function() {
                             // AI died - determine winner by highest score
                             if (typeof MP !== 'undefined' && MP.mode === 'ai_battle') {
@@ -149,6 +155,9 @@
                                 };
                                 gameState = 2;
                                 LobbyUI.showResults(results);
+                                $('#opponentPanel').hide();
+                                $('#canvas').removeClass('mp-canvas');
+                                LobbyUI.resetLiveScoreboard();
                             }
                         }, 1000);
                     }

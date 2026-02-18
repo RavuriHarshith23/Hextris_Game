@@ -75,5 +75,71 @@
     "bestScore": 0,
     "totalScore": 0,
     "createdAt": 1771350461881
+  },
+  "Player_2474": {
+    "name": "Player_2474",
+    "rating": 1000,
+    "wins": 1,
+    "losses": 0,
+    "draws": 0,
+    "gamesPlayed": 1,
+    "bestScore": 0,
+    "totalScore": 0,
+    "createdAt": 1771352936711
+  },
+  "IDK": {
+    "name": "IDK",
+    "rating": 1000,
+    "wins": 0,
+    "losses": 0,
+    "draws": 0,
+    "gamesPlayed": 0,
+    "bestScore": 0,
+    "totalScore": 0,
+    "createdAt": 1771386617044
+  },
+  "HElllOOOOO": {
+    "name": "HElllOOOOO",
+    "rating": 1000,
+    "wins": 0,
+    "losses": 0,
+    "draws": 0,
+    "gamesPlayed": 0,
+    "bestScore": 0,
+    "totalScore": 0,
+    "createdAt": 1771386628506
+  },
+  "HARSHITH": {
+    "name": "HARSHITH",
+    "rating": 1000,
+    "wins": 0,
+    "losses": 0,
+    "draws": 0,
+    "gamesPlayed": 0,
+    "bestScore": 0,
+    "totalScore": 0,
+    "createdAt": 1771386682838
+  },
+  "Player_3316": {
+    "name": "Player_3316",
+    "rating": 1000,
+    "wins": 1,
+    "losses": 0,
+    "draws": 0,
+    "gamesPlayed": 1,
+    "bestScore": 0,
+    "totalScore": 0,
+    "createdAt": 1771386707323
+  },
+  "Player_461": {
+    "name": "Player_461",
+    "rating": 1000,
+    "wins": 0,
+    "losses": 0,
+    "draws": 0,
+    "gamesPlayed": 0,
+    "bestScore": 0,
+    "totalScore": 0,
+    "createdAt": 1771386711233
   }
 }

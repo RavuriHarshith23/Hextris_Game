@@ -779,7 +779,7 @@ button:focus {
 	width: calc(100% - 280px) !important;
 }
 
-/* ─── Opponent Side Panel ────────────────────────────────── */
+/* ─── Opponent Side Panel / Live Scoreboard ──────────────── */
 #opponentPanel {
 	position: fixed;
 	top: 0;
@@ -796,69 +796,182 @@ button:focus {
 	box-sizing: border-box;
 }
 
-.opp-header {
+/* ─── Scoreboard Title ───────────────────────────────────── */
+.sb-title {
+	width: 100%;
+	text-align: center;
+	font-family: 'Exo 2', sans-serif;
+	font-size: 13px;
+	font-weight: 600;
+	letter-spacing: 3px;
+	color: rgba(255,255,255,0.6);
+	text-transform: uppercase;
+	margin-bottom: 12px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ─── Live Scoreboard Container ──────────────────────────── */
+.live-scoreboard {
 	width: 100%;
 	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 12px;
+	flex-direction: column;
+	gap: 6px;
+	margin-bottom: 14px;
 }
 
-#opponentName {
-	color: #fff;
-	font-family: 'Exo 2', sans-serif;
-	font-size: 16px;
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-}
-
-#opponentLives {
+/* ─── Scoreboard Row ─────────────────────────────────────── */
+.sb-row {
 	display: flex;
-	gap: 4px;
+	align-items: center;
+	padding: 10px 12px;
+	border-radius: 10px;
+	background: rgba(255,255,255,0.03);
+	border: 1px solid rgba(255,255,255,0.05);
+	transition: all 0.4s ease;
+	position: relative;
+	overflow: hidden;
 }
 
-.opp-heart {
+.sb-row.sb-rank-1 {
+	background: linear-gradient(135deg, rgba(241, 196, 15, 0.12), rgba(243, 156, 18, 0.06));
+	border-color: rgba(241, 196, 15, 0.25);
+	box-shadow: 0 0 15px rgba(241, 196, 15, 0.08);
+}
+
+.sb-row.sb-rank-2 {
+	background: rgba(192, 192, 192, 0.06);
+	border-color: rgba(192, 192, 192, 0.12);
+}
+
+.sb-row.sb-me {
+	border-color: rgba(52, 152, 219, 0.3);
+}
+
+.sb-row.sb-me.sb-rank-1 {
+	border-color: rgba(241, 196, 15, 0.4);
+}
+
+.sb-row.sb-dead {
+	opacity: 0.4;
+	filter: grayscale(0.5);
+}
+
+/* ─── Scoreboard Position / Medal ────────────────────────── */
+.sb-pos {
+	width: 28px;
+	min-width: 28px;
+	font-family: 'Exo 2', sans-serif;
+	font-size: 14px;
+	font-weight: 700;
+	color: rgba(255,255,255,0.4);
+	text-align: center;
+}
+
+.sb-medal {
 	font-size: 16px;
+}
+
+/* ─── Scoreboard Player Info ─────────────────────────────── */
+.sb-info {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	margin-left: 8px;
+	overflow: hidden;
+}
+
+.sb-name {
+	font-family: 'Exo 2', sans-serif;
+	font-size: 13px;
+	font-weight: 600;
+	color: #fff;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.sb-you {
+	font-size: 10px;
+	color: rgba(52, 152, 219, 0.8);
+	font-weight: 400;
+}
+
+.sb-hearts {
+	display: flex;
+	gap: 2px;
+}
+
+.sb-heart {
+	font-size: 14px;
+	line-height: 1;
 	transition: opacity 0.3s;
 }
-.opp-heart.empty {
+
+.sb-heart.empty {
 	opacity: 0.2;
 	filter: grayscale(1);
 }
 
+/* ─── Scoreboard Score ───────────────────────────────────── */
+.sb-score {
+	font-family: 'Exo 2', sans-serif;
+	font-size: 20px;
+	font-weight: 700;
+	color: #f1c40f;
+	min-width: 50px;
+	text-align: right;
+	text-shadow: 0 0 10px rgba(241, 196, 15, 0.2);
+}
+
+.sb-row.sb-rank-1 .sb-score {
+	color: #f1c40f;
+	text-shadow: 0 0 12px rgba(241, 196, 15, 0.3);
+}
+
+.sb-row.sb-dead .sb-score {
+	color: rgba(255,255,255,0.3);
+	text-shadow: none;
+}
+
+/* ─── Elimination Badge ──────────────────────────────────── */
+.sb-elim {
+	font-family: 'Exo 2', sans-serif;
+	font-size: 9px;
+	font-weight: 700;
+	color: #e74c3c;
+	background: rgba(231, 76, 60, 0.15);
+	padding: 2px 6px;
+	border-radius: 4px;
+	letter-spacing: 1px;
+	margin-left: 6px;
+}
+
+/* ─── Scoreboard Footer ──────────────────────────────────── */
+.sb-footer {
+	width: 100%;
+	text-align: center;
+	margin-top: 8px;
+	padding-top: 8px;
+	border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.sb-footer-label {
+	font-family: 'Exo 2', sans-serif;
+	font-size: 11px;
+	color: rgba(255,255,255,0.4);
+	letter-spacing: 1px;
+}
+
+/* ─── Opponent Canvas (mini-board) ───────────────────────── */
 #opponentCanvas {
 	width: 100%;
 	max-width: 240px;
 	border-radius: 12px;
 	background: rgba(20, 20, 40, 0.5);
 	border: 1px solid rgba(255,255,255,0.06);
-}
-
-.opp-score-row {
-	width: 100%;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-top: 12px;
-	padding: 8px 12px;
-	background: rgba(255,255,255,0.04);
-	border-radius: 8px;
-}
-
-.opp-score-label {
-	color: rgba(255,255,255,0.5);
-	font-family: 'Exo 2', sans-serif;
-	font-size: 11px;
-	letter-spacing: 2px;
-	text-transform: uppercase;
-}
-
-#opponentScore {
-	color: #fff;
-	font-family: 'Exo 2', sans-serif;
-	font-size: 24px;
-	font-weight: 600;
+	margin-top: 8px;
 }
 
 /* ─── MP Screens (shared) ────────────────────────────────── */
@@ -2046,28 +2159,43 @@ button:focus {
 		left: 0;
 		right: 0;
 		width: 100%;
-		height: 140px;
-		flex-direction: row;
+		height: auto;
+		max-height: 200px;
+		flex-direction: column;
 		border-left: none;
 		border-top: 2px solid rgba(255,255,255,0.08);
 		padding: 8px 12px;
 	}
 
 	#opponentCanvas {
-		width: 120px;
-		height: 120px;
-		max-width: 120px;
+		display: none;
 	}
 
-	.opp-header {
-		flex-direction: column;
-		align-items: flex-start;
-		margin-bottom: 0;
-		margin-right: 8px;
+	.sb-title {
+		font-size: 11px;
+		margin-bottom: 6px;
+		padding-bottom: 6px;
 	}
 
-	.opp-score-row {
-		margin-top: 4px;
+	.live-scoreboard {
+		gap: 4px;
+		margin-bottom: 6px;
+	}
+
+	.sb-row {
+		padding: 6px 10px;
+	}
+
+	.sb-name {
+		font-size: 12px;
+	}
+
+	.sb-score {
+		font-size: 16px;
+	}
+
+	.sb-footer {
+		display: none;
 	}
 
 	.mp-title {

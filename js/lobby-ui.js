@@ -280,6 +280,7 @@
                 // Restart AI battle directly
                 setTimeout(function() {
                     LobbyUI.hideAllScreens(false);
+                    LobbyUI.resetLiveScoreboard();
                     MP.isMultiplayer = true;
                     MP.mode = 'ai_battle';
                     $('#opponentPanel').show();
@@ -291,6 +292,10 @@
                         AIOpponent.start(diff || 'medium');
                     }
                     if (typeof BattleRender !== 'undefined') BattleRender.start();
+                    // Start scoreboard auto-refresh for AI battle
+                    LobbyUI._sbInterval = setInterval(function() {
+                        LobbyUI.renderLiveScoreboard();
+                    }, 300);
                 }, 250);
             } else if (MP.roomId) {
                 MP.toggleReady();
@@ -374,21 +379,112 @@
         }
     };
 
-    // ─── Update Opponent Panel ──────────────────────────────
+    // ─── Update Opponent Panel / Live Scoreboard ────────────
     LobbyUI.updateOpponentPanel = function(data) {
-        $('#opponentName').text(data.name || 'Opponent');
-        $('#opponentScore').text(data.score || 0);
-        LobbyUI.updateOpponentLives(data.lives || 0);
+        // Store opponent data for scoreboard
+        if (!LobbyUI._liveScores) LobbyUI._liveScores = {};
+        LobbyUI._liveScores[data.playerId || data.name] = {
+            name: data.name || 'Opponent',
+            score: data.score || 0,
+            lives: (data.lives !== undefined) ? data.lives : 0,
+            alive: data.gameState !== 2 && (data.lives === undefined || data.lives > 0)
+        };
+        LobbyUI.renderLiveScoreboard();
     };
 
     LobbyUI.updateOpponentLives = function(lives) {
-        var heartSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#e74c3c"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
-        var emptyHeart = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
-        var hearts = '';
-        for (var i = 0; i < 3; i++) {
-            hearts += '<span class="opp-heart' + (i < lives ? '' : ' empty') + '">' + (i < lives ? heartSvg : emptyHeart) + '</span>';
+        // Still update stored opponent data
+        if (LobbyUI._liveScores) {
+            var keys = Object.keys(LobbyUI._liveScores);
+            keys.forEach(function(k) {
+                if (LobbyUI._liveScores[k]) {
+                    // lives updated via updateOpponentPanel
+                }
+            });
         }
-        $('#opponentLives').html(hearts);
+        LobbyUI.renderLiveScoreboard();
+    };
+
+    // ─── Render Live Scoreboard ─────────────────────────────
+    LobbyUI.renderLiveScoreboard = function() {
+        var el = document.getElementById('liveScoreboard');
+        if (!el) return;
+
+        // Gather all players: self + opponents
+        var players = [];
+
+        // Add self
+        var myName = (typeof MP !== 'undefined' && MP.playerName) ? MP.playerName : 'You';
+        var myScore = (typeof score !== 'undefined') ? score : 0;
+        var myLives = (typeof lives !== 'undefined') ? lives : 0;
+        var myAlive = myLives > 0 && (typeof gameState !== 'undefined' ? gameState !== 2 : true);
+        players.push({ id: 'me', name: myName, score: myScore, lives: myLives, alive: myAlive, isMe: true });
+
+        // Add opponents
+        if (LobbyUI._liveScores) {
+            var keys = Object.keys(LobbyUI._liveScores);
+            keys.forEach(function(k) {
+                var p = LobbyUI._liveScores[k];
+                players.push({ id: k, name: p.name, score: p.score, lives: p.lives, alive: p.alive, isMe: false });
+            });
+        }
+
+        // Sort by score descending
+        players.sort(function(a, b) { return b.score - a.score; });
+
+        // Build HTML
+        var heartFull = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#e74c3c"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+        var heartEmpty = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+
+        var html = '';
+        players.forEach(function(p, i) {
+            var rankClass = (i === 0) ? ' sb-rank-1' : (i === 1 ? ' sb-rank-2' : '');
+            var meClass = p.isMe ? ' sb-me' : '';
+            var deadClass = !p.alive ? ' sb-dead' : '';
+
+            var heartsHtml = '';
+            var maxLives = 3;
+            for (var h = 0; h < maxLives; h++) {
+                heartsHtml += '<span class="sb-heart' + (h < p.lives ? '' : ' empty') + '">' + (h < p.lives ? heartFull : heartEmpty) + '</span>';
+            }
+
+            var medal = '';
+            if (i === 0) medal = '<span class="sb-medal">👑</span>';
+            else if (i === 1) medal = '<span class="sb-medal">🥈</span>';
+            else if (i === 2) medal = '<span class="sb-medal">🥉</span>';
+
+            html += '<div class="sb-row' + rankClass + meClass + deadClass + '">';
+            html += '<span class="sb-pos">' + (medal || ('#' + (i + 1))) + '</span>';
+            html += '<div class="sb-info">';
+            html += '<span class="sb-name">' + escapeHtml(p.name) + (p.isMe ? ' <span class="sb-you">(YOU)</span>' : '') + '</span>';
+            html += '<span class="sb-hearts">' + heartsHtml + '</span>';
+            html += '</div>';
+            html += '<span class="sb-score">' + p.score + '</span>';
+            if (!p.alive) html += '<span class="sb-elim">OUT</span>';
+            html += '</div>';
+        });
+
+        el.innerHTML = html;
+
+        // Update footer with leader info
+        var footer = document.querySelector('.sb-footer-label');
+        if (footer && players.length > 0) {
+            if (players[0].isMe) {
+                footer.textContent = '🔥 You are in the lead!';
+                footer.style.color = '#f1c40f';
+            } else {
+                var diff = players[0].score - myScore;
+                footer.textContent = players[0].name + ' leads by ' + diff + ' pts';
+                footer.style.color = 'rgba(255,255,255,0.5)';
+            }
+        }
+    };
+
+    // ─── Reset Live Scoreboard ───────────────────────────────
+    LobbyUI.resetLiveScoreboard = function() {
+        LobbyUI._liveScores = {};
+        var el = document.getElementById('liveScoreboard');
+        if (el) el.innerHTML = '';
     };
 
     // ─── Chat ───────────────────────────────────────────────
@@ -554,17 +650,27 @@
         LobbyUI.hideAllScreens(false); // Don't show startBtn during MP game
         LobbyUI.showCountdown(0); // "GO!"
 
-        // Show opponent panel
+        // Reset and show live scoreboard
+        LobbyUI.resetLiveScoreboard();
         $('#opponentPanel').show();
         $('#canvas').addClass('mp-canvas');
 
-        // Initialize opponent display
+        // Initialize all opponents in the scoreboard
         var opponents = data.room.players.filter(function(p) { return p.id !== MP.playerId; });
-        if (opponents.length > 0) {
-            $('#opponentName').text(opponents[0].name);
-            $('#opponentScore').text('0');
-            LobbyUI.updateOpponentLives(data.settings.livesCount);
-        }
+        opponents.forEach(function(opp) {
+            LobbyUI.updateOpponentPanel({
+                playerId: opp.id,
+                name: opp.name,
+                score: 0,
+                lives: data.settings.livesCount,
+                gameState: 1
+            });
+        });
+
+        // Start scoreboard auto-refresh for self
+        LobbyUI._sbInterval = setInterval(function() {
+            LobbyUI.renderLiveScoreboard();
+        }, 300);
 
         // Start the actual game
         MP.startSync();
@@ -594,12 +700,18 @@
 
     MP.onGameEnd = function(data) {
         MP.stopSync();
+        // Stop scoreboard refresh
+        if (LobbyUI._sbInterval) {
+            clearInterval(LobbyUI._sbInterval);
+            LobbyUI._sbInterval = null;
+        }
         // Small delay before showing results
         setTimeout(function() {
             LobbyUI.showResults(data);
             // Hide game UI
             $('#opponentPanel').hide();
             $('#canvas').removeClass('mp-canvas');
+            LobbyUI.resetLiveScoreboard();
         }, 1500);
     };
 

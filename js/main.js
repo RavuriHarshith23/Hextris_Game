@@ -475,6 +475,11 @@ function checkGameOver() {
 			// Handle AI battle game over (player died)
 			if (typeof MP !== 'undefined' && MP.mode === 'ai_battle') {
 				if (typeof AIOpponent !== 'undefined') AIOpponent.stop();
+				// Stop scoreboard refresh
+				if (typeof LobbyUI !== 'undefined' && LobbyUI._sbInterval) {
+					clearInterval(LobbyUI._sbInterval);
+					LobbyUI._sbInterval = null;
+				}
 				var playerScore = score || 0;
 				var aiState = AIOpponent.getState ? AIOpponent.getState() : { score: 0 };
 				var aiScore = aiState.score || 0;
@@ -490,7 +495,12 @@ function checkGameOver() {
 				};
 				gameOverDisplay();
 				setTimeout(function() {
-					if (typeof LobbyUI !== 'undefined') LobbyUI.showResults(results);
+					if (typeof LobbyUI !== 'undefined') {
+						LobbyUI.showResults(results);
+						$('#opponentPanel').hide();
+						$('#canvas').removeClass('mp-canvas');
+						LobbyUI.resetLiveScoreboard();
+					}
 				}, 800);
 				return true;
 			}
