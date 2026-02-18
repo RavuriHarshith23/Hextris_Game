@@ -472,6 +472,29 @@ function checkGameOver() {
 				MP.stopSync();
 			}
 
+			// Handle AI battle game over (player died)
+			if (typeof MP !== 'undefined' && MP.mode === 'ai_battle') {
+				if (typeof AIOpponent !== 'undefined') AIOpponent.stop();
+				var playerScore = score || 0;
+				var aiState = AIOpponent.getState ? AIOpponent.getState() : { score: 0 };
+				var aiScore = aiState.score || 0;
+				var playerWins = playerScore >= aiScore;
+				
+				var results = {
+					results: [
+						{ playerId: playerWins ? MP.playerId : 'ai', name: playerWins ? MP.playerName : 'AI Bot', score: playerWins ? playerScore : aiScore, isWinner: true },
+						{ playerId: playerWins ? 'ai' : MP.playerId, name: playerWins ? 'AI Bot' : MP.playerName, score: playerWins ? aiScore : playerScore, isWinner: false }
+					],
+					winnerId: playerWins ? MP.playerId : 'ai',
+					winnerName: playerWins ? MP.playerName : 'AI Bot'
+				};
+				gameOverDisplay();
+				setTimeout(function() {
+					if (typeof LobbyUI !== 'undefined') LobbyUI.showResults(results);
+				}, 800);
+				return true;
+			}
+
 			// Submit to leaderboard
 			if (typeof Leaderboard !== 'undefined') {
 				var mode = (typeof MP !== 'undefined' && MP.mode) ? MP.mode : 'single';

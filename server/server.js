@@ -558,17 +558,25 @@ function endGame(roomId, winnerId) {
 
     room.state = 'finished';
 
-    // Calculate results
+    // Calculate results - sort by score descending
     var results = Object.entries(room.players).map(function(entry) {
         return {
             playerId: entry[0],
             name: entry[1].name,
             score: entry[1].score,
             lives: entry[1].lives,
-            alive: entry[1].alive,
-            isWinner: entry[0] === winnerId
+            alive: entry[1].alive
         };
     }).sort(function(a, b) { return b.score - a.score; });
+
+    // Winner is the player with the HIGHEST SCORE
+    var actualWinnerId = results[0].playerId;
+    var actualWinnerName = results[0].name;
+
+    // Mark the winner
+    results.forEach(function(r) {
+        r.isWinner = (r.playerId === actualWinnerId);
+    });
 
     // Update profiles and leaderboard
     results.forEach(function(r) {
@@ -596,11 +604,11 @@ function endGame(roomId, winnerId) {
 
     io.to(roomId).emit('gameEnd', {
         results: results,
-        winnerId: winnerId,
-        winnerName: winnerId && room.players[winnerId] ? room.players[winnerId].name : null
+        winnerId: actualWinnerId,
+        winnerName: actualWinnerName
     });
 
-    console.log('Game ended in room', roomId, '- Winner:', winnerId);
+    console.log('Game ended in room', roomId, '- Winner:', actualWinnerName, '(score:', results[0].score, ')');
 }
 
 function tryMatchPlayers(mode) {

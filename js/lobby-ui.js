@@ -276,7 +276,23 @@
         $('#mpBtnPlayAgain').on('click', function(e) {
             e.preventDefault();
             $('#mpResultsScreen').fadeOut(200);
-            if (MP.roomId) {
+            if (MP.mode === 'ai_battle') {
+                // Restart AI battle directly
+                setTimeout(function() {
+                    LobbyUI.hideAllScreens(false);
+                    MP.isMultiplayer = true;
+                    MP.mode = 'ai_battle';
+                    $('#opponentPanel').show();
+                    $('#canvas').addClass('mp-canvas');
+                    clearSaveState();
+                    init(1);
+                    if (typeof AIOpponent !== 'undefined') {
+                        var diff = AIOpponent.getState ? AIOpponent.getState().difficulty : 'medium';
+                        AIOpponent.start(diff || 'medium');
+                    }
+                    if (typeof BattleRender !== 'undefined') BattleRender.start();
+                }, 250);
+            } else if (MP.roomId) {
                 MP.toggleReady();
                 LobbyUI.showLobby();
             } else {
@@ -417,7 +433,19 @@
         var resultsHtml = '';
         var myResult = null;
 
-        data.results.forEach(function(r, i) {
+        // Sort results by score descending (highest score first)
+        var sortedResults = data.results.slice().sort(function(a, b) { return b.score - a.score; });
+
+        // Ensure the highest scorer is marked as winner
+        sortedResults.forEach(function(r, i) {
+            r.isWinner = (i === 0);
+        });
+
+        var topScore = sortedResults[0] ? sortedResults[0].score : 0;
+        var secondScore = sortedResults[1] ? sortedResults[1].score : 0;
+        var scoreDiff = topScore - secondScore;
+
+        sortedResults.forEach(function(r, i) {
             var isMe = r.playerId === MP.playerId;
             if (isMe) myResult = r;
             resultsHtml += '<div class="result-row' + (isMe ? ' me' : '') + (r.isWinner ? ' winner' : '') + '">';
@@ -428,10 +456,23 @@
             resultsHtml += '</div>';
         });
 
+        // Show score difference
+        if (sortedResults.length >= 2 && scoreDiff > 0) {
+            resultsHtml += '<div class="result-score-diff">Won by ' + scoreDiff + ' points</div>';
+        } else if (sortedResults.length >= 2 && scoreDiff === 0) {
+            resultsHtml += '<div class="result-score-diff">It\'s a tie!</div>';
+        }
+
         $('#mpResultsList').html(resultsHtml);
 
         if (myResult && myResult.isWinner) {
             $('#mpResultTitle').text('🎉 VICTORY!').css('color', '#f1c40f');
+            // Trigger celebration particles
+            if (typeof Particles !== 'undefined' && typeof Particles.levelWin === 'function') {
+                var cw = (typeof trueCanvas !== 'undefined') ? trueCanvas.width / 2 : window.innerWidth / 2;
+                var ch = (typeof trueCanvas !== 'undefined') ? trueCanvas.height / 2 : window.innerHeight / 2;
+                Particles.levelWin(cw, ch, ['#f1c40f', '#e67e22', '#2ecc71', '#3498db']);
+            }
         } else {
             $('#mpResultTitle').text('DEFEAT').css('color', '#e74c3c');
         }

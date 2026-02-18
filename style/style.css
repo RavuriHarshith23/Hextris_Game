@@ -315,6 +315,91 @@ a:hover {
 	margin-right: auto;
 }
 
+/* ===== PAUSE MENU BUTTONS ===== */
+.pause-menu-buttons {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 14px;
+	margin-top: 28px;
+}
+
+.pause-btn {
+	font-family: 'Exo 2', sans-serif;
+	font-size: 16px;
+	font-weight: 600;
+	padding: 14px 48px;
+	border: none;
+	border-radius: 12px;
+	cursor: pointer;
+	transition: all 0.25s ease;
+	letter-spacing: 1px;
+	min-width: 220px;
+	text-align: center;
+}
+
+.pause-resume-btn {
+	background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+	color: #fff;
+	box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+}
+
+.pause-resume-btn:hover {
+	background: linear-gradient(135deg, #27ae60 0%, #219a52 100%);
+	box-shadow: 0 6px 20px rgba(46, 204, 113, 0.5);
+	transform: translateY(-2px);
+}
+
+.pause-quit-btn {
+	background: rgba(231, 76, 60, 0.15);
+	color: #e74c3c;
+	border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.pause-quit-btn:hover {
+	background: rgba(231, 76, 60, 0.3);
+	border-color: rgba(231, 76, 60, 0.6);
+	color: #fff;
+	transform: translateY(-2px);
+}
+
+/* ===== PAUSE SCORE DISPLAY ===== */
+.pause-score-display {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 18px;
+}
+
+.pause-score-label {
+	font-family: 'Exo 2', sans-serif;
+	font-size: 0.75rem;
+	color: rgba(255,255,255,0.45);
+	letter-spacing: 3px;
+	text-transform: uppercase;
+}
+
+.pause-score-value {
+	font-family: 'Exo 2', sans-serif;
+	font-size: 2.5rem;
+	font-weight: 600;
+	color: #f1c40f;
+	text-shadow: 0 0 15px rgba(241, 196, 15, 0.3);
+}
+
+.pause-lives-display {
+	display: flex;
+	gap: 4px;
+	justify-content: center;
+	margin-top: 6px;
+	font-size: 1rem;
+}
+
+.pause-heart.empty {
+	opacity: 0.2;
+	filter: grayscale(1);
+}
+
 /* ===== HELP SCREEN ===== */
 #helpScreen {
 	position: fixed;
@@ -632,6 +717,17 @@ button:focus {
 
 	.centeredSubHeader {
 		font-size: 1rem;
+	}
+
+	.pause-btn {
+		padding: 12px 36px;
+		font-size: 14px;
+		min-width: 180px;
+	}
+
+	.pause-menu-buttons {
+		gap: 10px;
+		margin-top: 20px;
 	}
 
 	#inst_main_body {
@@ -1834,11 +1930,12 @@ button:focus {
 .result-row {
 	display: flex;
 	align-items: center;
-	padding: 12px 16px;
-	border-radius: 8px;
-	margin-bottom: 6px;
+	padding: 14px 18px;
+	border-radius: 10px;
+	margin-bottom: 8px;
 	background: rgba(255,255,255,0.03);
 	border: 1px solid rgba(255,255,255,0.06);
+	transition: all 0.3s ease;
 }
 
 .result-row.me {
@@ -1847,8 +1944,36 @@ button:focus {
 }
 
 .result-row.winner {
-	background: rgba(241, 196, 15, 0.1);
-	border-color: rgba(241, 196, 15, 0.25);
+	background: linear-gradient(135deg, rgba(241, 196, 15, 0.15), rgba(243, 156, 18, 0.1));
+	border-color: rgba(241, 196, 15, 0.35);
+	box-shadow: 0 0 20px rgba(241, 196, 15, 0.1);
+	animation: winnerGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes winnerGlow {
+	from { box-shadow: 0 0 10px rgba(241, 196, 15, 0.1); }
+	to   { box-shadow: 0 0 25px rgba(241, 196, 15, 0.2); }
+}
+
+.result-title {
+	font-size: 2rem !important;
+	letter-spacing: 4px;
+	margin-bottom: 8px;
+}
+
+.result-title-sub {
+	font-size: 0.85rem;
+	color: rgba(255,255,255,0.5);
+	margin-bottom: 16px;
+	font-family: 'Exo 2', sans-serif;
+}
+
+.result-score-diff {
+	font-size: 0.8rem;
+	color: rgba(255,255,255,0.4);
+	margin-top: 4px;
+	font-family: 'Exo 2', sans-serif;
+	text-align: center;
 }
 
 .result-rank {

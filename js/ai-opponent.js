@@ -134,16 +134,20 @@
                     if (typeof LobbyUI !== 'undefined') {
                         LobbyUI.updateOpponentLives(0);
                         setTimeout(function() {
-                            // Player wins!
+                            // AI died - determine winner by highest score
                             if (typeof MP !== 'undefined' && MP.mode === 'ai_battle') {
+                                var playerScore = window.score || 0;
+                                var aiScore = _aiState.score;
+                                var playerWins = playerScore >= aiScore;
                                 var results = {
                                     results: [
-                                        { playerId: MP.playerId, name: MP.playerName, score: window.score || 0, isWinner: true },
-                                        { playerId: 'ai', name: 'AI Bot', score: _aiState.score, isWinner: false }
+                                        { playerId: playerWins ? MP.playerId : 'ai', name: playerWins ? MP.playerName : 'AI Bot', score: playerWins ? playerScore : aiScore, isWinner: true },
+                                        { playerId: playerWins ? 'ai' : MP.playerId, name: playerWins ? 'AI Bot' : MP.playerName, score: playerWins ? aiScore : playerScore, isWinner: false }
                                     ],
-                                    winnerId: MP.playerId,
-                                    winnerName: MP.playerName
+                                    winnerId: playerWins ? MP.playerId : 'ai',
+                                    winnerName: playerWins ? MP.playerName : 'AI Bot'
                                 };
+                                gameState = 2;
                                 LobbyUI.showResults(results);
                             }
                         }, 1000);

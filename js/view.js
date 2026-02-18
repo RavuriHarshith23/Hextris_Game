@@ -93,11 +93,20 @@ function toggleClass(element, active) {
 }
 
 function showText(text) {
+	var currentScore = (typeof score !== 'undefined') ? score : 0;
+	var scoreDisplay = "<div class='pause-score-display'><span class='pause-score-label'>SCORE</span><span class='pause-score-value'>" + currentScore + "</span></div>";
+	var livesLeft = (typeof lives !== 'undefined') ? lives : 0;
+	var livesDisplay = '';
+	for (var li = 0; li < 3; li++) {
+		livesDisplay += '<span class="pause-heart' + (li < livesLeft ? '' : ' empty') + '">❤️</span>';
+	}
+	var statusBar = scoreDisplay + "<div class='pause-lives-display'>" + livesDisplay + "</div>";
+
 	var messages = {
-		'paused': "<div class='centeredHeader unselectable'>Game Paused</div>",
-		'pausedAndroid': "<div class='centeredHeader unselectable'>Game Paused</div><div class='unselectable centeredSubHeader'>Tap to resume</div>",
-		'pausediOS': "<div class='centeredHeader unselectable'>Game Paused</div><div class='unselectable centeredSubHeader'>Tap to resume</div>",
-		'pausedOther': "<div class='centeredHeader unselectable'>Game Paused</div><div class='unselectable centeredSubHeader'>Press Space or P to resume</div>",
+		'paused': "<div class='centeredHeader unselectable'>Game Paused</div>" + statusBar + "<div class='pause-menu-buttons'><button class='pause-btn pause-resume-btn' onclick='pause()'>▶ Resume</button><button class='pause-btn pause-quit-btn' onclick='quitToMenu()'>🏠 Quit to Menu</button></div>",
+		'pausedAndroid': "<div class='centeredHeader unselectable'>Game Paused</div>" + statusBar + "<div class='pause-menu-buttons'><button class='pause-btn pause-resume-btn' onclick='pause()'>▶ Resume</button><button class='pause-btn pause-quit-btn' onclick='quitToMenu()'>🏠 Quit to Menu</button></div>",
+		'pausediOS': "<div class='centeredHeader unselectable'>Game Paused</div>" + statusBar + "<div class='pause-menu-buttons'><button class='pause-btn pause-resume-btn' onclick='pause()'>▶ Resume</button><button class='pause-btn pause-quit-btn' onclick='quitToMenu()'>🏠 Quit to Menu</button></div>",
+		'pausedOther': "<div class='centeredHeader unselectable'>Game Paused</div>" + statusBar + "<div class='unselectable centeredSubHeader'>Press Space or P to resume</div><div class='pause-menu-buttons'><button class='pause-btn pause-resume-btn' onclick='pause()'>▶ Resume</button><button class='pause-btn pause-quit-btn' onclick='quitToMenu()'>🏠 Quit to Menu</button></div>",
 		'start': "<div class='centeredHeader unselectable' style='line-height:80px;'>Press enter to start</div>"
 	};
 
@@ -176,6 +185,50 @@ function updateHighScores (){
 }
 
 var pausable = true;
+function quitToMenu() {
+    // Quit current game and go back to main menu
+    pausable = true;
+    gameState = 2;
+    hideText();
+    clearSaveState();
+    
+    // Stop multiplayer sync
+    if (typeof MP !== 'undefined' && MP.isMultiplayer) {
+        MP.leaveRoom();
+        if (typeof AIOpponent !== 'undefined') AIOpponent.stop();
+    }
+    // Stop timer mode
+    if (typeof GameModes !== 'undefined' && GameModes.getActiveMode()) {
+        GameModes.clear();
+    }
+    // Stop level mode
+    if (typeof GameLevels !== 'undefined') GameLevels.clearActive();
+    
+    // Hide all overlays and game elements
+    $('#overlay').fadeOut(200);
+    $('#gameoverscreen').fadeOut(200);
+    $('#opponentPanel').hide();
+    $('#canvas').removeClass('mp-canvas');
+    $('#pauseBtn').hide();
+    $('#restartBtn').hide();
+    $('#livesDisplay').removeClass('visible');
+    $('#highScoreInGameText').removeClass('visible');
+    $('#levelDisplay').removeClass('visible');
+    $('#powerUpBar').removeClass('visible');
+    document.getElementById('canvas').className = '';
+    
+    window.gameMode = null;
+    MP.isMultiplayer = false;
+    MP.mode = null;
+    
+    // Show main menu
+    setTimeout(function() {
+        if (typeof LobbyUI !== 'undefined') {
+            LobbyUI.showMainMenu();
+        }
+    }, 250);
+}
+
 function pause(o) {
     if (gameState == 0 || gameState == 2 || !pausable) {
         return;
